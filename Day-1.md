@@ -23,4 +23,3 @@ The idea is to create an interactive platform where customers can design their o
 - Start working on the interactive 3D cake preview.
 
 ---
-**Project Status:** 🟡 Initial Development
