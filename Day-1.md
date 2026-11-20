@@ -1,6 +1,6 @@
 # 🍰 Day 1 – The Journey Begins!
 
-### Project: 3D Cake Customizer
+### Project: WHISKORA
 
 Today marks the beginning of my journey towards building an interactive cake customization website!
 

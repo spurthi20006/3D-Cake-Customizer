@@ -2,7 +2,9 @@
 
 ### What if you could design your dream cake instead of just choosing one?
 
-That's the idea behind my new project – **3D Cake Customizer!**
+That's the idea behind my new project – **WHISKORA**.
+
+*Whisk Your Imagination to Life.*
 
 Imagine having the freedom to create a cake exactly the way you want it. Choose your favourite flavour, experiment with colours, select beautiful decorations, add personalized messages, and bring your imagination to life!
 
