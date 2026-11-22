@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,7 +25,6 @@
 }
 
 * { box-sizing: border-box; }
-
 html { scroll-behavior: smooth; }
 
 body {
@@ -329,7 +327,6 @@ h2 {
 }
 
 .customizer-group { margin-bottom: 38px; }
-
 .customizer-group:last-child { margin-bottom: 0; }
 
 .customizer-group h3 {
@@ -461,6 +458,98 @@ h2 {
     color: var(--cocoa);
     font-size: .72rem;
     margin: 8px 0 0;
+}
+
+/* DAY 4: TOPPINGS & FONDANT */
+
+.decoration-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(125px,1fr));
+    gap: 12px;
+}
+
+.decoration-card {
+    align-items: center;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    color: var(--espresso);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-height: 112px;
+    padding: 12px 8px;
+    font-family: var(--sans);
+    font-size: .76rem;
+    transition: .2s;
+}
+
+.decoration-card:hover,
+.decoration-card.active {
+    border-color: var(--rose-dark);
+    box-shadow: inset 0 0 0 1px var(--rose-dark);
+    background: #f7e9e2;
+}
+
+.decoration-card:focus-visible,
+.colour-swatch:focus-visible {
+    outline: 2px solid var(--rose);
+    outline-offset: 3px;
+}
+
+.decoration-icon {
+    font-size: 2rem;
+    line-height: 1.2;
+}
+
+.fondant-colours {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.colour-choice {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: .72rem;
+}
+
+.colour-swatch {
+    border: 2px solid white;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--line);
+    cursor: pointer;
+    height: 34px;
+    width: 34px;
+}
+
+.colour-swatch.active {
+    box-shadow: 0 0 0 2px var(--rose-dark);
+}
+
+.decoration-layer {
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 3;
+}
+
+.preview-decoration {
+    position: absolute;
+    font-size: 1.55rem;
+    filter: drop-shadow(0 2px 2px rgba(51,35,31,.18));
+}
+
+.fondant-preview {
+    left: 50%;
+    position: absolute;
+    top: -13px;
+    transform: translateX(-50%);
+    z-index: 4;
+    font-size: 2rem;
+    filter: drop-shadow(0 2px 2px rgba(51,35,31,.18));
 }
 
 /* FEATURES */
@@ -664,9 +753,7 @@ footer {
 }
 
 footer .brand-mark { border-color: var(--paper); }
-
 footer .brand-name { font-size: 1.7rem; }
-
 footer .brand-tagline { color: var(--sand); }
 
 footer p,
@@ -704,12 +791,9 @@ footer h3 {
 
 @media (max-width:800px) {
     .container { width: min(100% - 32px,620px); }
-
     .nav { min-height: 68px; }
-
     .nav-links,
     .nav-cta { display: none; }
-
     .hero { padding: 58px 0 70px; }
 
     .hero-grid,
@@ -743,10 +827,12 @@ footer h3 {
     .section-heading p { margin-top: 20px; }
 
     .feature-grid,
-    .steps-grid { grid-template-columns: 1fr; gap: 16px; }
+    .steps-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
 
     .feature-card { padding: 25px; }
-
     .gallery-grid { grid-template-columns: 1fr 1fr; }
 
     .gallery-card:first-child {
@@ -770,17 +856,11 @@ footer h3 {
     }
 
     .about-image { height: 350px; }
-
     .footer-grid { grid-template-columns: 1fr 1fr; }
-
     .footer-grid > :first-child { grid-column: span 2; }
-
     .footer-bottom { display: block; }
-
     .footer-bottom p + p { margin-top: 8px; }
-
     .customizer-layout { grid-template-columns: 1fr; }
-
     .cake-summary { position: static; }
 
     .customizer-options,
@@ -789,11 +869,8 @@ footer h3 {
 
 @media (max-width:430px) {
     .gallery-grid { grid-template-columns: 1fr; }
-
     .gallery-card:first-child { grid-column: auto; }
-
     .gallery-card { min-height: 350px; }
-
     .hero-actions .button { width: 100%; }
 }
 </style>
@@ -931,6 +1008,89 @@ footer h3 {
         </div>
     </div>
 
+    <!-- DAY 4: TOPPINGS -->
+
+    <div class="customizer-group">
+        <h3>04. Add your toppings</h3>
+        <p>Choose as many decorations as you like.</p>
+
+        <div class="decoration-grid" id="toppingOptions">
+            <button type="button" class="decoration-card" data-topping="Strawberries" aria-pressed="false">
+                <span class="decoration-icon">🍓</span>Strawberries
+            </button>
+
+            <button type="button" class="decoration-card" data-topping="Blueberries" aria-pressed="false">
+                <span class="decoration-icon">🫐</span>Blueberries
+            </button>
+
+            <button type="button" class="decoration-card" data-topping="Cherries" aria-pressed="false">
+                <span class="decoration-icon">🍒</span>Cherries
+            </button>
+
+            <button type="button" class="decoration-card" data-topping="Chocolate curls" aria-pressed="false">
+                <span class="decoration-icon">🍫</span>Chocolate curls
+            </button>
+
+            <button type="button" class="decoration-card" data-topping="Cookie pieces" aria-pressed="false">
+                <span class="decoration-icon">🍪</span>Cookie pieces
+            </button>
+
+            <button type="button" class="decoration-card" data-topping="Macarons" aria-pressed="false">
+                <span class="decoration-icon">🍬</span>Macarons
+            </button>
+
+            <button type="button" class="decoration-card" data-topping="Edible flowers" aria-pressed="false">
+                <span class="decoration-icon">🌸</span>Edible flowers
+            </button>
+        </div>
+    </div>
+
+    <!-- DAY 4: FONDANT -->
+
+    <div class="customizer-group">
+        <h3>05. Choose fondant details</h3>
+        <p>Add a little handmade finishing touch.</p>
+
+        <div class="option-grid" id="fondantOptions">
+            <button type="button" class="option-card active" data-fondant="None">None</button>
+            <button type="button" class="option-card" data-fondant="Flower">Flower</button>
+            <button type="button" class="option-card" data-fondant="Bow">Bow</button>
+            <button type="button" class="option-card" data-fondant="Heart">Heart</button>
+            <button type="button" class="option-card" data-fondant="Star">Star</button>
+        </div>
+
+        <p style="margin-top:22px;">Fondant colour</p>
+
+        <div class="fondant-colours" id="fondantColours">
+
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch active" data-colour="Blush pink" style="background:#e8aeb5" aria-label="Blush pink"></button>
+                <span>Blush</span>
+            </div>
+
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-colour="Ivory" style="background:#f5ead7" aria-label="Ivory"></button>
+                <span>Ivory</span>
+            </div>
+
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-colour="Sage" style="background:#a9b99b" aria-label="Sage"></button>
+                <span>Sage</span>
+            </div>
+
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-colour="Lavender" style="background:#b9a6ce" aria-label="Lavender"></button>
+                <span>Lavender</span>
+            </div>
+
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-colour="Buttercream" style="background:#f0d58e" aria-label="Buttercream"></button>
+                <span>Buttercream</span>
+            </div>
+
+        </div>
+    </div>
+
 </div>
 
 <!-- CAKE SUMMARY -->
@@ -944,6 +1104,8 @@ footer h3 {
             <div class="cake-top"></div>
             <div class="cake-body"></div>
             <div class="cake-plate"></div>
+            <div class="decoration-layer" id="decorationLayer"></div>
+            <div class="fondant-preview" id="fondantPreview"></div>
         </div>
     </div>
 
@@ -962,6 +1124,16 @@ footer h3 {
     <div class="summary-row">
         <span>Size</span>
         <strong id="selectedSize">500 g</strong>
+    </div>
+
+    <div class="summary-row">
+        <span>Toppings</span>
+        <strong id="selectedToppings">None</strong>
+    </div>
+
+    <div class="summary-row">
+        <span>Fondant</span>
+        <strong id="selectedFondant">None</strong>
     </div>
 
     <div class="summary-total">
@@ -1198,7 +1370,10 @@ footer h3 {
 const cake = {
     flavour: "Vanilla",
     shape: "Round",
-    size: "500g"
+    size: "500g",
+    toppings: [],
+    fondant: "None",
+    fondantColour: "Blush pink"
 };
 
 const prices = {
@@ -1210,11 +1385,39 @@ const prices = {
 const flavourOptions = document.querySelectorAll("#flavourOptions .option-card");
 const shapeOptions = document.querySelectorAll('[data-group="shape"]');
 const sizeOptions = document.querySelectorAll('[data-group="size"]');
+const toppingOptions = document.querySelectorAll("[data-topping]");
+const fondantOptions = document.querySelectorAll("[data-fondant]");
+const fondantColourOptions = document.querySelectorAll("[data-colour]");
+
+const fondantSymbols = {
+    None: "",
+    Flower: "🌸",
+    Bow: "🎀",
+    Heart: "♥",
+    Star: "★"
+};
+
+const fondantColourValues = {
+    "Blush pink": "#e8aeb5",
+    Ivory: "#f5ead7",
+    Sage: "#a9b99b",
+    Lavender: "#b9a6ce",
+    Buttercream: "#f0d58e"
+};
+
+const toppingSymbols = {
+    Strawberries: "🍓",
+    Blueberries: "🫐",
+    Cherries: "🍒",
+    "Chocolate curls": "🍫",
+    "Cookie pieces": "🍪",
+    Macarons: "🍬",
+    "Edible flowers": "🌸"
+};
 
 function updateCake() {
 
     document.getElementById("selectedFlavour").textContent = cake.flavour;
-
     document.getElementById("selectedShape").textContent = cake.shape;
 
     document.getElementById("selectedSize").textContent =
@@ -1224,9 +1427,15 @@ function updateCake() {
     document.getElementById("cakePrice").textContent =
         "₹" + prices[cake.size];
 
+    document.getElementById("selectedToppings").textContent =
+        cake.toppings.length ? cake.toppings.join(", ") : "None";
+
+    document.getElementById("selectedFondant").textContent =
+        cake.fondant === "None" ? "None" : cake.fondant + " (" + cake.fondantColour + ")";
+
     const preview = document.getElementById("previewCake");
 
-    const colours = {
+    const flavourColours = {
         "Vanilla": "#e9c9a7",
         "Eggless Vanilla": "#f0d9b5",
         "Chocolate": "#68402e",
@@ -1234,9 +1443,8 @@ function updateCake() {
         "Butterscotch": "#d49a45"
     };
 
-    document.querySelector(".cake-body").style.background = colours[cake.flavour];
-
-    document.querySelector(".cake-top").style.background = colours[cake.flavour];
+    document.querySelector(".cake-body").style.background = flavourColours[cake.flavour];
+    document.querySelector(".cake-top").style.background = flavourColours[cake.flavour];
 
     preview.style.width = {
         "500g": "175px",
@@ -1246,16 +1454,48 @@ function updateCake() {
 
     preview.style.borderRadius =
         cake.shape === "Round" ? "0" :
-        cake.shape === "Heart" ? "20px 20px 50% 50%" :
-        "5px";
+        cake.shape === "Heart" ? "20px 20px 50% 50%" : "5px";
 
     document.querySelector(".cake-body").style.borderRadius =
         cake.shape === "Round" ? "12px 12px 20px 20px" :
         cake.shape === "Heart" ? "20px 20px 45% 45%" :
         "5px";
+
+    // Update selected toppings on cake preview
+
+    const decorationLayer = document.getElementById("decorationLayer");
+    decorationLayer.innerHTML = "";
+
+    cake.toppings.forEach((topping, index) => {
+
+        const decoration = document.createElement("span");
+
+        decoration.className = "preview-decoration";
+        decoration.textContent = toppingSymbols[topping];
+
+        decoration.style.left = [
+            "18%", "43%", "68%", "28%", "58%", "78%", "8%"
+        ][index % 7];
+
+        decoration.style.top = [
+            "20%", "8%", "25%", "58%", "55%", "45%", "38%"
+        ][index % 7];
+
+        decorationLayer.appendChild(decoration);
+
+    });
+
+    // Update fondant preview
+
+    const fondantPreview = document.getElementById("fondantPreview");
+
+    fondantPreview.textContent = fondantSymbols[cake.fondant];
+    fondantPreview.style.color = fondantColourValues[cake.fondantColour];
 }
 
-function setupOptions(options, property) {
+// Single-selection options
+
+function setupSingleChoice(options, updateValue) {
 
     options.forEach(option => {
 
@@ -1265,7 +1505,11 @@ function setupOptions(options, property) {
 
             option.classList.add("active");
 
-            cake[property] = option.dataset.value;
+            updateValue(
+                option.dataset.value ||
+                option.dataset.fondant ||
+                option.dataset.colour
+            );
 
             updateCake();
 
@@ -1275,13 +1519,81 @@ function setupOptions(options, property) {
 
 }
 
-setupOptions(flavourOptions, "flavour");
-setupOptions(shapeOptions, "shape");
-setupOptions(sizeOptions, "size");
+setupSingleChoice(flavourOptions, value => cake.flavour = value);
+setupSingleChoice(shapeOptions, value => cake.shape = value);
+setupSingleChoice(sizeOptions, value => cake.size = value);
+
+// Multiple topping selection
+
+toppingOptions.forEach(option => {
+
+    option.addEventListener("click", () => {
+
+        const topping = option.dataset.topping;
+
+        if (cake.toppings.includes(topping)) {
+
+            cake.toppings = cake.toppings.filter(item => item !== topping);
+
+            option.classList.remove("active");
+            option.setAttribute("aria-pressed", "false");
+
+        } else {
+
+            cake.toppings.push(topping);
+
+            option.classList.add("active");
+            option.setAttribute("aria-pressed", "true");
+
+        }
+
+        updateCake();
+
+    });
+
+});
+
+// Fondant shape selection
+
+fondantOptions.forEach(option => {
+
+    option.addEventListener("click", () => {
+
+        fondantOptions.forEach(item => item.classList.remove("active"));
+
+        option.classList.add("active");
+
+        cake.fondant = option.dataset.fondant;
+
+        updateCake();
+
+    });
+
+});
+
+// Fondant colour selection
+
+fondantColourOptions.forEach(option => {
+
+    option.addEventListener("click", () => {
+
+        fondantColourOptions.forEach(item => item.classList.remove("active"));
+
+        option.classList.add("active");
+
+        cake.fondantColour = option.dataset.colour;
+
+        updateCake();
+
+    });
+
+});
+
+// Initial cake preview
 
 updateCake();
+
 </script>
 
 </body>
 </html>
-```
