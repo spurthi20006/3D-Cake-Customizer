@@ -10,6 +10,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+}
+</script>
+
 <style>
 :root {
     --cream: #f8f3eb;
@@ -314,7 +323,7 @@ h2 {
 
 .customizer-layout {
     display: grid;
-    grid-template-columns: 1.2fr .8fr;
+    grid-template-columns: 1.08fr .92fr;
     gap: 35px;
     align-items: start;
 }
@@ -326,18 +335,36 @@ h2 {
     border: 1px solid var(--line);
 }
 
-.customizer-group { margin-bottom: 38px; }
-.customizer-group:last-child { margin-bottom: 0; }
+.customizer-group {
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+}
+
+.customizer-group:last-child {
+    border-bottom: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
 
 .customizer-group h3 {
-    font-size: 2rem;
-    margin-bottom: 8px;
+    font-size: 1.95rem;
+    margin-bottom: 6px;
 }
 
 .customizer-group p {
     color: var(--cocoa);
     font-size: .85rem;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
+}
+
+.sub-label {
+    color: var(--cocoa);
+    font-size: .74rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    margin: 22px 0 12px;
+    text-transform: uppercase;
 }
 
 .option-grid {
@@ -353,7 +380,8 @@ h2 {
     cursor: pointer;
     font-family: var(--sans);
     font-size: .82rem;
-    padding: 13px 18px;
+    font-weight: 500;
+    padding: 12px 17px;
     transition: .2s;
 }
 
@@ -364,89 +392,167 @@ h2 {
     color: white;
 }
 
-.option-card:focus-visible {
+.option-card:focus-visible,
+.viewport-btn:focus-visible,
+.topper-input:focus-visible {
     outline: 2px solid var(--rose);
     outline-offset: 3px;
 }
 
 .cake-summary {
     position: sticky;
-    top: 100px;
+    top: 94px;
 }
 
-.cake-preview {
-    align-items: center;
-    background: var(--cream);
-    display: flex;
-    height: 260px;
-    justify-content: center;
-    margin: 22px 0;
+/* DAY 5: 3D VIEWPORT */
+
+.cake-viewport {
+    background: radial-gradient(circle at 50% 38%, #fffdf9 0%, #efe3d4 100%);
+    border: 1px solid var(--line);
+    height: 360px;
+    margin: 16px 0 12px;
     overflow: hidden;
-}
-
-.preview-cake {
     position: relative;
-    height: 125px;
-    width: 175px;
-    transition: .3s;
+    user-select: none;
 }
 
-.cake-body {
-    background: #e9c9a7;
-    border-radius: 12px 12px 20px 20px;
-    height: 95px;
+.cake-viewport canvas {
+    cursor: grab;
+    display: block;
+    height: 100%;
+    touch-action: none;
+    width: 100%;
+}
+
+.cake-viewport canvas:active { cursor: grabbing; }
+
+.viewport-badge {
+    background: rgba(255,253,249,.86);
+    border: 1px solid var(--line);
+    color: var(--espresso);
+    font-size: .66rem;
+    font-weight: 700;
+    left: 12px;
+    letter-spacing: .12em;
+    padding: 5px 10px;
+    pointer-events: none;
     position: absolute;
+    text-transform: uppercase;
+    top: 12px;
+    z-index: 2;
+}
+
+.viewport-hint {
+    background: rgba(51,35,31,.72);
+    border-radius: 999px;
     bottom: 12px;
-    width: 100%;
-    transition: .3s;
+    color: var(--paper);
+    font-size: .68rem;
+    left: 50%;
+    letter-spacing: .04em;
+    padding: 5px 12px;
+    pointer-events: none;
+    position: absolute;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 2;
 }
 
-.cake-top {
-    background: #f5dfc7;
-    border-radius: 50%;
-    height: 35px;
+.viewport-toast {
+    background: rgba(51,35,31,.92);
+    border-radius: 4px;
+    color: var(--paper);
+    font-size: .74rem;
+    font-weight: 600;
+    left: 50%;
+    opacity: 0;
+    padding: 7px 14px;
+    pointer-events: none;
     position: absolute;
-    top: 10px;
-    width: 100%;
-    z-index: 1;
-    transition: .3s;
+    top: 46px;
+    transform: translate(-50%, -6px);
+    transition: opacity .25s, transform .25s;
+    white-space: nowrap;
+    z-index: 3;
 }
 
-.cake-plate {
-    background: #c8b3a2;
-    border-radius: 50%;
-    bottom: 0;
-    height: 13px;
+.viewport-toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+.viewport-fallback {
+    align-items: center;
+    color: var(--cocoa);
+    display: none;
+    font-size: .85rem;
+    inset: 0;
+    justify-content: center;
+    padding: 24px;
     position: absolute;
-    width: 115%;
-    left: -7.5%;
+    text-align: center;
+}
+
+.viewport-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 22px;
+}
+
+.viewport-btn {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    color: var(--espresso);
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: .72rem;
+    font-weight: 600;
+    padding: 7px 10px;
+    transition: .18s;
+}
+
+.viewport-btn:hover {
+    border-color: var(--espresso);
+    background: var(--sand);
+}
+
+.viewport-btn.active {
+    background: var(--rose-dark);
+    border-color: var(--rose-dark);
+    color: white;
 }
 
 .cake-summary h3 {
-    font-size: 2rem;
-    margin-bottom: 22px;
+    font-size: 1.9rem;
+    margin-bottom: 14px;
 }
 
 .summary-row,
 .summary-total {
-    align-items: center;
+    align-items: baseline;
     border-bottom: 1px solid var(--line);
     display: flex;
+    gap: 16px;
     justify-content: space-between;
-    padding: 13px 0;
+    padding: 10px 0;
 }
 
 .summary-row span,
 .summary-total span {
     color: var(--cocoa);
-    font-size: .85rem;
+    flex-shrink: 0;
+    font-size: .82rem;
 }
 
-.summary-row strong { font-size: .85rem; }
+.summary-row strong {
+    font-size: .82rem;
+    text-align: right;
+}
 
 .summary-total {
     border-bottom: 0;
-    margin-top: 10px;
+    margin-top: 8px;
 }
 
 .summary-total strong {
@@ -457,15 +563,15 @@ h2 {
 .price-note {
     color: var(--cocoa);
     font-size: .72rem;
-    margin: 8px 0 0;
+    margin: 6px 0 0;
 }
 
-/* DAY 4: TOPPINGS & FONDANT */
+/* TOPPINGS, SWATCHES & TOPPER INPUT */
 
 .decoration-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(125px,1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit,minmax(122px,1fr));
+    gap: 10px;
 }
 
 .decoration-card {
@@ -477,10 +583,12 @@ h2 {
     display: flex;
     flex-direction: column;
     gap: 7px;
-    min-height: 112px;
+    min-height: 104px;
     padding: 12px 8px;
     font-family: var(--sans);
-    font-size: .76rem;
+    font-size: .75rem;
+    font-weight: 500;
+    text-align: center;
     transition: .2s;
 }
 
@@ -498,11 +606,11 @@ h2 {
 }
 
 .decoration-icon {
-    font-size: 2rem;
+    font-size: 1.85rem;
     line-height: 1.2;
 }
 
-.fondant-colours {
+.swatch-row {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
@@ -513,7 +621,9 @@ h2 {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    font-size: .72rem;
+    font-size: .71rem;
+    min-width: 52px;
+    text-align: center;
 }
 
 .colour-swatch {
@@ -522,34 +632,26 @@ h2 {
     box-shadow: 0 0 0 1px var(--line);
     cursor: pointer;
     height: 34px;
+    transition: transform .15s, box-shadow .15s;
     width: 34px;
 }
+
+.colour-swatch:hover { transform: scale(1.06); }
 
 .colour-swatch.active {
     box-shadow: 0 0 0 2px var(--rose-dark);
 }
 
-.decoration-layer {
-    inset: 0;
-    pointer-events: none;
-    position: absolute;
-    z-index: 3;
-}
-
-.preview-decoration {
-    position: absolute;
-    font-size: 1.55rem;
-    filter: drop-shadow(0 2px 2px rgba(51,35,31,.18));
-}
-
-.fondant-preview {
-    left: 50%;
-    position: absolute;
-    top: -13px;
-    transform: translateX(-50%);
-    z-index: 4;
-    font-size: 2rem;
-    filter: drop-shadow(0 2px 2px rgba(51,35,31,.18));
+.topper-input {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    color: var(--espresso);
+    font-family: var(--sans);
+    font-size: .88rem;
+    margin-bottom: 10px;
+    max-width: 340px;
+    padding: 11px 14px;
+    width: 100%;
 }
 
 /* FEATURES */
@@ -635,6 +737,25 @@ h2 {
     font-size: .72rem;
     letter-spacing: .12em;
     text-transform: uppercase;
+}
+
+.gallery-action {
+    background: rgba(255,253,249,.92);
+    color: var(--espresso);
+    display: inline-block;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    margin-top: 10px;
+    padding: 6px 11px;
+    text-transform: uppercase;
+    transition: background .2s, color .2s, transform .2s;
+}
+
+.gallery-card:hover .gallery-action {
+    background: var(--rose-dark);
+    color: var(--paper);
+    transform: translateY(-2px);
 }
 
 /* STEPS */
@@ -862,6 +983,7 @@ footer h3 {
     .footer-bottom p + p { margin-top: 8px; }
     .customizer-layout { grid-template-columns: 1fr; }
     .cake-summary { position: static; }
+    .cake-viewport { height: 310px; }
 
     .customizer-options,
     .cake-summary { padding: 22px; }
@@ -956,17 +1078,17 @@ footer h3 {
 </div>
 </section>
 
-<!-- INTERACTIVE CUSTOMIZATION -->
+<!-- INTERACTIVE 3D CUSTOMIZATION -->
 
 <section class="section customize-section" id="customize">
 <div class="container">
 
 <div class="section-heading">
     <div>
-        <span class="eyebrow">Make it yours</span>
+        <span class="eyebrow">Make it yours in 3D</span>
         <h2>Create your dream cake.</h2>
     </div>
-    <p>Every little detail matters. Start creating a cake that is uniquely yours.</p>
+    <p>Rotate, zoom, and customize every layer—from sponge and filling to frosting and finishing touches.</p>
 </div>
 
 <div class="customizer-layout">
@@ -974,8 +1096,8 @@ footer h3 {
 <div class="customizer-options">
 
     <div class="customizer-group">
-        <h3>01. Choose your flavour</h3>
-        <p>Select the flavour you love.</p>
+        <h3>01. Sponge flavour</h3>
+        <p>Select the sponge baked at the heart of your cake.</p>
 
         <div class="option-grid" id="flavourOptions">
             <button type="button" class="option-card active" data-value="Vanilla">Vanilla</button>
@@ -987,8 +1109,8 @@ footer h3 {
     </div>
 
     <div class="customizer-group">
-        <h3>02. Pick your shape</h3>
-        <p>Choose your cake shape.</p>
+        <h3>02. Cake shape</h3>
+        <p>Choose your silhouette.</p>
 
         <div class="option-grid">
             <button type="button" class="option-card active" data-group="shape" data-value="Round">Round</button>
@@ -998,23 +1120,123 @@ footer h3 {
     </div>
 
     <div class="customizer-group">
-        <h3>03. Select your size</h3>
-        <p>How much sweetness do you need?</p>
+        <h3>03. Cake size &amp; layers</h3>
+        <p>Pick your weight and how tall you would like it stacked.</p>
 
+        <div class="sub-label">Weight</div>
         <div class="option-grid">
             <button type="button" class="option-card active" data-group="size" data-value="500g">500 g</button>
             <button type="button" class="option-card" data-group="size" data-value="1kg">1 kg</button>
             <button type="button" class="option-card" data-group="size" data-value="2kg">2 kg</button>
         </div>
+
+        <div class="sub-label">Layers</div>
+        <div class="option-grid">
+            <button type="button" class="option-card active" data-group="layers" data-value="Single">Single layer</button>
+            <button type="button" class="option-card" data-group="layers" data-value="Double">Double layer (+₹200)</button>
+            <button type="button" class="option-card" data-group="layers" data-value="Triple">Triple layer (+₹400)</button>
+        </div>
     </div>
 
-    <!-- DAY 4: TOPPINGS -->
+    <div class="customizer-group">
+        <h3>04. Cream &amp; filling</h3>
+        <p>Choose your whipped filling flavour and colour—visible in layered or slice view.</p>
+
+        <div class="sub-label">Cream flavour</div>
+        <div class="option-grid">
+            <button type="button" class="option-card active" data-group="creamFlavour" data-value="Vanilla Bean">Vanilla Bean</button>
+            <button type="button" class="option-card" data-group="creamFlavour" data-value="Chocolate Ganache">Chocolate Ganache</button>
+            <button type="button" class="option-card" data-group="creamFlavour" data-value="Strawberry Cream">Strawberry Cream</button>
+            <button type="button" class="option-card" data-group="creamFlavour" data-value="Cream Cheese">Cream Cheese</button>
+            <button type="button" class="option-card" data-group="creamFlavour" data-value="Salted Caramel">Salted Caramel</button>
+        </div>
+
+        <div class="sub-label">Filling colour</div>
+        <div class="swatch-row" id="fillingColours">
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch active" data-filling-colour="Ivory Cream" style="background:#fbf2df" aria-label="Ivory Cream"></button>
+                <span>Ivory</span>
+            </div>
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-filling-colour="Blush Berry" style="background:#f2b5c2" aria-label="Blush Berry"></button>
+                <span>Berry</span>
+            </div>
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-filling-colour="Rich Cocoa" style="background:#5a3323" aria-label="Rich Cocoa"></button>
+                <span>Cocoa</span>
+            </div>
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-filling-colour="Pistachio" style="background:#b8cda1" aria-label="Pistachio"></button>
+                <span>Pistachio</span>
+            </div>
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-filling-colour="Caramel Gold" style="background:#dda059" aria-label="Caramel Gold"></button>
+                <span>Caramel</span>
+            </div>
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-filling-colour="Lavender" style="background:#c9b8df" aria-label="Lavender"></button>
+                <span>Lavender</span>
+            </div>
+        </div>
+    </div>
 
     <div class="customizer-group">
-        <h3>04. Add your toppings</h3>
-        <p>Choose as many decorations as you like.</p>
+        <h3>05. Frosting finish &amp; colour</h3>
+        <p>Select your exterior texture and buttercream shade.</p>
+
+        <div class="sub-label">Frosting design</div>
+        <div class="option-grid">
+            <button type="button" class="option-card active" data-group="frostingStyle" data-value="Smooth">Smooth</button>
+            <button type="button" class="option-card" data-group="frostingStyle" data-value="Textured">Textured</button>
+            <button type="button" class="option-card" data-group="frostingStyle" data-value="Layered">Layered</button>
+        </div>
+
+        <div class="sub-label">Frosting colour</div>
+        <div class="swatch-row" id="frostingColours">
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch active" data-frosting-colour="Whipped Ivory" style="background:#fbf5ea" aria-label="Whipped Ivory"></button>
+                <span>Ivory</span>
+            </div>
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-frosting-colour="Blush Rose" style="background:#edc2c7" aria-label="Blush Rose"></button>
+                <span>Blush</span>
+            </div>
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-frosting-colour="Dark Ganache" style="background:#4f2e22" aria-label="Dark Ganache"></button>
+                <span>Ganache</span>
+            </div>
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-frosting-colour="Sage Mist" style="background:#b7c8a9" aria-label="Sage Mist"></button>
+                <span>Sage</span>
+            </div>
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-frosting-colour="Lavender" style="background:#c8b7dc" aria-label="Lavender"></button>
+                <span>Lavender</span>
+            </div>
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-frosting-colour="Buttercream" style="background:#f5dd99" aria-label="Buttercream"></button>
+                <span>Butter</span>
+            </div>
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-frosting-colour="Mocha" style="background:#9a7158" aria-label="Mocha"></button>
+                <span>Mocha</span>
+            </div>
+            <div class="colour-choice">
+                <button type="button" class="colour-swatch" data-frosting-colour="Dusty Blue" style="background:#adc3d5" aria-label="Dusty Blue"></button>
+                <span>Dusty Blue</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="customizer-group">
+        <h3>06. Decorations &amp; toppings</h3>
+        <p>Layer on cream swirls, fresh fruit, and hand-finished details.</p>
 
         <div class="decoration-grid" id="toppingOptions">
+            <button type="button" class="decoration-card" data-topping="Cream swirls" aria-pressed="false">
+                <span class="decoration-icon">🧁</span>Cream swirls
+            </button>
+
             <button type="button" class="decoration-card" data-topping="Strawberries" aria-pressed="false">
                 <span class="decoration-icon">🍓</span>Strawberries
             </button>
@@ -1042,15 +1264,30 @@ footer h3 {
             <button type="button" class="decoration-card" data-topping="Edible flowers" aria-pressed="false">
                 <span class="decoration-icon">🌸</span>Edible flowers
             </button>
+
+            <button type="button" class="decoration-card" data-topping="Gold pearls" aria-pressed="false">
+                <span class="decoration-icon">✨</span>Gold pearls
+            </button>
+
+            <button type="button" class="decoration-card" data-topping="Pink drip" aria-pressed="false">
+                <span class="decoration-icon">🩷</span>Pink drip
+            </button>
+
+            <button type="button" class="decoration-card" data-topping="Chocolate drip" aria-pressed="false">
+                <span class="decoration-icon">🍮</span>Chocolate drip
+            </button>
+
+            <button type="button" class="decoration-card" data-topping="Rainbow sprinkles" aria-pressed="false">
+                <span class="decoration-icon">🌈</span>Rainbow sprinkles
+            </button>
         </div>
     </div>
 
-    <!-- DAY 4: FONDANT -->
-
     <div class="customizer-group">
-        <h3>05. Choose fondant details</h3>
-        <p>Add a little handmade finishing touch.</p>
+        <h3>07. Fondant &amp; cake-top design</h3>
+        <p>Add sculpted fondant accents and an optional message plaque on top.</p>
 
+        <div class="sub-label">Fondant accent</div>
         <div class="option-grid" id="fondantOptions">
             <button type="button" class="option-card active" data-fondant="None">None</button>
             <button type="button" class="option-card" data-fondant="Flower">Flower</button>
@@ -1059,60 +1296,74 @@ footer h3 {
             <button type="button" class="option-card" data-fondant="Star">Star</button>
         </div>
 
-        <p style="margin-top:22px;">Fondant colour</p>
-
-        <div class="fondant-colours" id="fondantColours">
-
+        <div class="sub-label">Fondant colour</div>
+        <div class="swatch-row" id="fondantColours">
             <div class="colour-choice">
                 <button type="button" class="colour-swatch active" data-colour="Blush pink" style="background:#e8aeb5" aria-label="Blush pink"></button>
                 <span>Blush</span>
             </div>
-
             <div class="colour-choice">
                 <button type="button" class="colour-swatch" data-colour="Ivory" style="background:#f5ead7" aria-label="Ivory"></button>
                 <span>Ivory</span>
             </div>
-
             <div class="colour-choice">
                 <button type="button" class="colour-swatch" data-colour="Sage" style="background:#a9b99b" aria-label="Sage"></button>
                 <span>Sage</span>
             </div>
-
             <div class="colour-choice">
                 <button type="button" class="colour-swatch" data-colour="Lavender" style="background:#b9a6ce" aria-label="Lavender"></button>
                 <span>Lavender</span>
             </div>
-
             <div class="colour-choice">
                 <button type="button" class="colour-swatch" data-colour="Buttercream" style="background:#f0d58e" aria-label="Buttercream"></button>
                 <span>Buttercream</span>
             </div>
+        </div>
 
+        <div class="sub-label">Custom cake-top message</div>
+        <input type="text" class="topper-input" id="topperTextInput" maxlength="24" placeholder="e.g. Happy Birthday (+₹50)" aria-label="Custom cake-top message">
+        <div class="option-grid">
+            <button type="button" class="option-card active" data-topper-preset="">None</button>
+            <button type="button" class="option-card" data-topper-preset="Happy Birthday">Happy Birthday</button>
+            <button type="button" class="option-card" data-topper-preset="With Love">With Love</button>
+            <button type="button" class="option-card" data-topper-preset="Celebrate">Celebrate</button>
         </div>
     </div>
 
 </div>
 
-<!-- CAKE SUMMARY -->
+<!-- 3D CAKE PREVIEW & SUMMARY -->
 
 <aside class="cake-summary">
 
-    <span class="eyebrow">Your creation</span>
+    <span class="eyebrow">Live 3D studio</span>
 
-    <div class="cake-preview">
-        <div class="preview-cake" id="previewCake">
-            <div class="cake-top"></div>
-            <div class="cake-body"></div>
-            <div class="cake-plate"></div>
-            <div class="decoration-layer" id="decorationLayer"></div>
-            <div class="fondant-preview" id="fondantPreview"></div>
+    <div class="cake-viewport" id="cakeViewport">
+        <span class="viewport-badge">Interactive 3D</span>
+        <div class="viewport-toast" id="viewportToast" role="status" aria-live="polite"></div>
+        <canvas id="cakeCanvas" aria-label="Interactive 3D cake preview"></canvas>
+        <div class="viewport-hint">Drag to rotate · Scroll to zoom</div>
+        <div class="viewport-fallback" id="viewportFallback">
+            Unable to start the 3D preview in this browser. Your cake summary and pricing still update live below.
         </div>
+    </div>
+
+    <div class="viewport-controls" aria-label="3D preview camera controls">
+        <button type="button" class="viewport-btn active" data-camera="iso">3/4 View</button>
+        <button type="button" class="viewport-btn" data-camera="top">Top</button>
+        <button type="button" class="viewport-btn" data-camera="side">Side</button>
+        <button type="button" class="viewport-btn" data-camera="front">Front</button>
+        <button type="button" class="viewport-btn" id="zoomInBtn" aria-label="Zoom in">Zoom +</button>
+        <button type="button" class="viewport-btn" id="zoomOutBtn" aria-label="Zoom out">Zoom −</button>
+        <button type="button" class="viewport-btn" id="autoRotateBtn" aria-pressed="false">Auto-rotate</button>
+        <button type="button" class="viewport-btn" id="sliceToggleBtn" aria-pressed="false">Slice view</button>
+        <button type="button" class="viewport-btn" id="resetCameraBtn">Reset</button>
     </div>
 
     <h3>Your cake summary</h3>
 
     <div class="summary-row">
-        <span>Flavour</span>
+        <span>Sponge flavour</span>
         <strong id="selectedFlavour">Vanilla</strong>
     </div>
 
@@ -1122,18 +1373,33 @@ footer h3 {
     </div>
 
     <div class="summary-row">
-        <span>Size</span>
-        <strong id="selectedSize">500 g</strong>
+        <span>Size &amp; layers</span>
+        <strong id="selectedSize">500 g · Single</strong>
     </div>
 
     <div class="summary-row">
-        <span>Toppings</span>
+        <span>Cream &amp; filling</span>
+        <strong id="selectedCream">Vanilla Bean (Ivory Cream)</strong>
+    </div>
+
+    <div class="summary-row">
+        <span>Frosting</span>
+        <strong id="selectedFrosting">Smooth · Whipped Ivory</strong>
+    </div>
+
+    <div class="summary-row">
+        <span>Decorations</span>
         <strong id="selectedToppings">None</strong>
     </div>
 
     <div class="summary-row">
         <span>Fondant</span>
         <strong id="selectedFondant">None</strong>
+    </div>
+
+    <div class="summary-row">
+        <span>Cake-top design</span>
+        <strong id="selectedTopperText">None</strong>
     </div>
 
     <div class="summary-total">
@@ -1201,27 +1467,30 @@ footer h3 {
 
 <div class="gallery-grid">
 
-<a class="gallery-card" href="#customize">
-    <img src="https://images.unsplash.com/photo-1558301211-0d8c8ddee6ec?auto=format&fit=crop&w=900&q=85" alt="White cake decorated with strawberries">
+<a class="gallery-card" href="#customize" data-preset="strawberry-cloud">
+    <img src="https://images.unsplash.com/photo-1558301211-0d8c8ddee6ec?auto=format&fit=crop&w=900&q=85" alt="White cake decorated with strawberries, pink drip, and sprinkles">
     <div class="gallery-label">
         <span>Fresh &amp; fruity</span>
         <h3>Strawberry cloud</h3>
+        <div class="gallery-action">Load onto 3D plate ↗</div>
     </div>
 </a>
 
-<a class="gallery-card" href="#customize">
+<a class="gallery-card" href="#customize" data-preset="midnight">
     <img src="https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?auto=format&fit=crop&w=700&q=85" alt="Elegant chocolate celebration cake">
     <div class="gallery-label">
         <span>Deep &amp; decadent</span>
         <h3>Midnight</h3>
+        <div class="gallery-action">Load onto 3D plate ↗</div>
     </div>
 </a>
 
-<a class="gallery-card" href="#customize">
+<a class="gallery-card" href="#customize" data-preset="petal-pink">
     <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=700&q=85" alt="Pink frosted cake with delicate decoration">
     <div class="gallery-label">
         <span>Softly celebratory</span>
         <h3>Petal pink</h3>
+        <div class="gallery-action">Load onto 3D plate ↗</div>
     </div>
 </a>
 
@@ -1257,8 +1526,8 @@ footer h3 {
 
 <article class="step">
     <span class="step-number">03</span>
-    <h3>Preview</h3>
-    <p>See your idea come together in our interactive cake preview.</p>
+    <h3>Preview in 3D</h3>
+    <p>Rotate, zoom, and inspect every layer in our interactive 3D cake studio.</p>
 </article>
 
 <article class="step">
@@ -1364,235 +1633,1658 @@ footer h3 {
 </div>
 </footer>
 
-<!-- CUSTOMIZATION JAVASCRIPT -->
+<!-- 3D CUSTOMIZATION JAVASCRIPT (THREE.JS) -->
 
-<script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
 const cake = {
     flavour: "Vanilla",
     shape: "Round",
     size: "500g",
+    layers: "Single",
+    creamFlavour: "Vanilla Bean",
+    fillingColour: "Ivory Cream",
+    frostingStyle: "Smooth",
+    frostingColour: "Whipped Ivory",
     toppings: [],
     fondant: "None",
-    fondantColour: "Blush pink"
+    fondantColour: "Blush pink",
+    topperText: "",
+    sliceView: false
 };
 
-const prices = {
-    "500g": 350,
-    "1kg": 650,
-    "2kg": 1200
+const PRICES = {
+    size: { "500g": 350, "1kg": 650, "2kg": 1200 },
+    layers: { Single: 0, Double: 200, Triple: 400 },
+    topping: 50,
+    fondant: 100,
+    topperText: 50
 };
 
-const flavourOptions = document.querySelectorAll("#flavourOptions .option-card");
-const shapeOptions = document.querySelectorAll('[data-group="shape"]');
-const sizeOptions = document.querySelectorAll('[data-group="size"]');
-const toppingOptions = document.querySelectorAll("[data-topping]");
-const fondantOptions = document.querySelectorAll("[data-fondant]");
-const fondantColourOptions = document.querySelectorAll("[data-colour]");
-
-const fondantSymbols = {
-    None: "",
-    Flower: "🌸",
-    Bow: "🎀",
-    Heart: "♥",
-    Star: "★"
+const SPONGE_COLOURS = {
+    "Vanilla": "#edd0a3",
+    "Eggless Vanilla": "#f4dfb8",
+    "Chocolate": "#5c3424",
+    "Red Velvet": "#9a2a35",
+    "Butterscotch": "#d49445"
 };
 
-const fondantColourValues = {
+const CREAM_DEFAULT_COLOURS = {
+    "Vanilla Bean": "Ivory Cream",
+    "Chocolate Ganache": "Rich Cocoa",
+    "Strawberry Cream": "Blush Berry",
+    "Cream Cheese": "Ivory Cream",
+    "Salted Caramel": "Caramel Gold"
+};
+
+const FILLING_HEX = {
+    "Ivory Cream": "#fbf2df",
+    "Blush Berry": "#f2b5c2",
+    "Rich Cocoa": "#5a3323",
+    "Pistachio": "#b8cda1",
+    "Caramel Gold": "#dda059",
+    "Lavender": "#c9b8df"
+};
+
+const FROSTING_HEX = {
+    "Whipped Ivory": "#fbf5ea",
+    "Blush Rose": "#edc2c7",
+    "Dark Ganache": "#4f2e22",
+    "Sage Mist": "#b7c8a9",
+    "Lavender": "#c8b7dc",
+    "Buttercream": "#f5dd99",
+    "Mocha": "#9a7158",
+    "Dusty Blue": "#adc3d5"
+};
+
+const FONDANT_HEX = {
     "Blush pink": "#e8aeb5",
-    Ivory: "#f5ead7",
-    Sage: "#a9b99b",
-    Lavender: "#b9a6ce",
-    Buttercream: "#f0d58e"
+    "Ivory": "#f5ead7",
+    "Sage": "#a9b99b",
+    "Lavender": "#b9a6ce",
+    "Buttercream": "#f0d58e"
 };
 
-const toppingSymbols = {
-    Strawberries: "🍓",
-    Blueberries: "🫐",
-    Cherries: "🍒",
-    "Chocolate curls": "🍫",
-    "Cookie pieces": "🍪",
-    Macarons: "🍬",
-    "Edible flowers": "🌸"
+const SIZE_DIMENSIONS = {
+    "500g": { radius: 1.02, heightScale: 0.94 },
+    "1kg": { radius: 1.24, heightScale: 1.0 },
+    "2kg": { radius: 1.46, heightScale: 1.08 }
 };
 
-function updateCake() {
+// Cutaway wedge angles in 2D shape space (front-right in 3D view)
+const CUT_START = -0.94;
+const CUT_END = -0.14;
 
+/* ---------------- SUMMARY & PRICING ---------------- */
+
+function updateSummaryUI() {
     document.getElementById("selectedFlavour").textContent = cake.flavour;
     document.getElementById("selectedShape").textContent = cake.shape;
-
     document.getElementById("selectedSize").textContent =
-        cake.size === "500g" ? "500 g" :
-        cake.size === "1kg" ? "1 kg" : "2 kg";
-
-    document.getElementById("cakePrice").textContent =
-        "₹" + prices[cake.size];
-
+        (cake.size === "500g" ? "500 g" : cake.size === "1kg" ? "1 kg" : "2 kg") +
+        " · " + cake.layers;
+    document.getElementById("selectedCream").textContent =
+        cake.creamFlavour + " (" + cake.fillingColour + ")";
+    document.getElementById("selectedFrosting").textContent =
+        cake.frostingStyle + " · " + cake.frostingColour;
     document.getElementById("selectedToppings").textContent =
         cake.toppings.length ? cake.toppings.join(", ") : "None";
-
     document.getElementById("selectedFondant").textContent =
         cake.fondant === "None" ? "None" : cake.fondant + " (" + cake.fondantColour + ")";
+    document.getElementById("selectedTopperText").textContent =
+        cake.topperText.trim() ? `"${cake.topperText.trim()}"` : "None";
 
-    const preview = document.getElementById("previewCake");
+    const totalPrice =
+        PRICES.size[cake.size] +
+        PRICES.layers[cake.layers] +
+        cake.toppings.length * PRICES.topping +
+        (cake.fondant !== "None" ? PRICES.fondant : 0) +
+        (cake.topperText.trim() ? PRICES.topperText : 0);
 
-    const flavourColours = {
-        "Vanilla": "#e9c9a7",
-        "Eggless Vanilla": "#f0d9b5",
-        "Chocolate": "#68402e",
-        "Red Velvet": "#a83e42",
-        "Butterscotch": "#d49a45"
+    document.getElementById("cakePrice").textContent = "₹" + totalPrice;
+}
+
+/* ---------------- PROCEDURAL TEXTURES ---------------- */
+
+const textureCache = new Map();
+
+function getSpongeTexture(hex) {
+    const key = "sponge:" + hex;
+    if (textureCache.has(key)) return textureCache.get(key);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = hex;
+    ctx.fillRect(0, 0, 256, 256);
+
+    const base = new THREE.Color(hex);
+    const darker = base.clone().multiplyScalar(0.76).getStyle();
+    const lighter = base.clone().lerp(new THREE.Color("#ffffff"), 0.22).getStyle();
+
+    // Deterministic pseudo-random crumb pores
+    let seed = 42;
+    const rand = () => {
+        seed = (seed * 1664525 + 1013904223) % 4294967296;
+        return seed / 4294967296;
     };
 
-    document.querySelector(".cake-body").style.background = flavourColours[cake.flavour];
-    document.querySelector(".cake-top").style.background = flavourColours[cake.flavour];
+    for (let i = 0; i < 1400; i++) {
+        ctx.fillStyle = rand() > 0.4 ? darker : lighter;
+        ctx.globalAlpha = 0.28 + rand() * 0.35;
+        const x = rand() * 256;
+        const y = rand() * 256;
+        const r = 0.7 + rand() * 2.1;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+    }
 
-    preview.style.width = {
-        "500g": "175px",
-        "1kg": "195px",
-        "2kg": "215px"
-    }[cake.size];
-
-    preview.style.borderRadius =
-        cake.shape === "Round" ? "0" :
-        cake.shape === "Heart" ? "20px 20px 50% 50%" : "5px";
-
-    document.querySelector(".cake-body").style.borderRadius =
-        cake.shape === "Round" ? "12px 12px 20px 20px" :
-        cake.shape === "Heart" ? "20px 20px 45% 45%" :
-        "5px";
-
-    // Update selected toppings on cake preview
-
-    const decorationLayer = document.getElementById("decorationLayer");
-    decorationLayer.innerHTML = "";
-
-    cake.toppings.forEach((topping, index) => {
-
-        const decoration = document.createElement("span");
-
-        decoration.className = "preview-decoration";
-        decoration.textContent = toppingSymbols[topping];
-
-        decoration.style.left = [
-            "18%", "43%", "68%", "28%", "58%", "78%", "8%"
-        ][index % 7];
-
-        decoration.style.top = [
-            "20%", "8%", "25%", "58%", "55%", "45%", "38%"
-        ][index % 7];
-
-        decorationLayer.appendChild(decoration);
-
-    });
-
-    // Update fondant preview
-
-    const fondantPreview = document.getElementById("fondantPreview");
-
-    fondantPreview.textContent = fondantSymbols[cake.fondant];
-    fondantPreview.style.color = fondantColourValues[cake.fondantColour];
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(2, 1.5);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    textureCache.set(key, tex);
+    return tex;
 }
 
-// Single-selection options
+function getFrostingBumpTexture() {
+    const key = "frosting-bump";
+    if (textureCache.has(key)) return textureCache.get(key);
 
-function setupSingleChoice(options, updateValue) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext("2d");
 
-    options.forEach(option => {
+    ctx.fillStyle = "#808080";
+    ctx.fillRect(0, 0, 256, 256);
 
-        option.addEventListener("click", () => {
+    // Artisanal horizontal spatula ridges
+    for (let y = 0; y < 256; y += 2) {
+        const wave = Math.sin(y * 0.28) * 34 + Math.cos(y * 0.65) * 16;
+        const val = Math.max(20, Math.min(235, Math.round(128 + wave)));
+        ctx.fillStyle = `rgb(${val},${val},${val})`;
+        ctx.fillRect(0, y, 256, 2);
+    }
 
-            options.forEach(item => item.classList.remove("active"));
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(3, 2);
+    textureCache.set(key, tex);
+    return tex;
+}
 
-            option.classList.add("active");
+function getStrawberryTexture() {
+    const key = "strawberry";
+    if (textureCache.has(key)) return textureCache.get(key);
 
-            updateValue(
-                option.dataset.value ||
-                option.dataset.fondant ||
-                option.dataset.colour
-            );
+    const canvas = document.createElement("canvas");
+    canvas.width = 128;
+    canvas.height = 128;
+    const ctx = canvas.getContext("2d");
 
-            updateCake();
+    const grad = ctx.createLinearGradient(0, 0, 0, 128);
+    grad.addColorStop(0, "#d9353c");
+    grad.addColorStop(0.7, "#bd1e28");
+    grad.addColorStop(1, "#9a1520");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 128, 128);
 
+    ctx.fillStyle = "#f2cf78";
+    for (let row = 10; row < 120; row += 14) {
+        const offset = (row % 28 === 10) ? 0 : 7;
+        for (let col = 6 + offset; col < 124; col += 14) {
+            ctx.beginPath();
+            ctx.ellipse(col, row, 1.5, 2.3, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    textureCache.set(key, tex);
+    return tex;
+}
+
+function createPlaqueTexture(text) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 512;
+    canvas.height = 192;
+    const ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = "#fff9ef";
+    ctx.fillRect(0, 0, 512, 192);
+
+    ctx.strokeStyle = "#c99c58";
+    ctx.lineWidth = 8;
+    ctx.strokeRect(12, 12, 488, 168);
+
+    ctx.strokeStyle = "#e6cfa4";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(22, 22, 468, 148);
+
+    ctx.fillStyle = "#3b2620";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const fontSize = text.length > 16 ? 40 : text.length > 11 ? 48 : 56;
+    ctx.font = `italic 600 ${fontSize}px "Cormorant Garamond", Georgia, serif`;
+    ctx.fillText(text, 256, 98, 430);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+}
+
+/* ---------------- 2D CONTOUR & CUTAWAY GEOMETRY ---------------- */
+
+function dedupeAndResampleContour(rawPts, targetCount) {
+    const clean = [];
+    for (const pt of rawPts) {
+        const prev = clean[clean.length - 1];
+        if (!prev || prev.distanceTo(pt) > 1e-4) {
+            clean.push(pt);
+        }
+    }
+    if (clean.length > 2 && clean[0].distanceTo(clean[clean.length - 1]) <= 1e-4) {
+        clean.pop();
+    }
+    if (!targetCount || clean.length < 3) return clean;
+
+    const cumLen = [0];
+    for (let i = 0; i < clean.length; i++) {
+        const next = clean[(i + 1) % clean.length];
+        cumLen.push(cumLen[i] + clean[i].distanceTo(next));
+    }
+    const totalLen = cumLen[cumLen.length - 1];
+    if (totalLen < 1e-5) return clean;
+
+    const resampled = [];
+    let segIdx = 0;
+    for (let i = 0; i < targetCount; i++) {
+        const targetD = (i / targetCount) * totalLen;
+        while (segIdx < clean.length - 1 && cumLen[segIdx + 1] < targetD) {
+            segIdx++;
+        }
+        const segStart = cumLen[segIdx];
+        const segEnd = cumLen[segIdx + 1];
+        const alpha = segEnd > segStart ? (targetD - segStart) / (segEnd - segStart) : 0;
+        const p1 = clean[segIdx];
+        const p2 = clean[(segIdx + 1) % clean.length];
+        resampled.push(new THREE.Vector2(
+            THREE.MathUtils.lerp(p1.x, p2.x, alpha),
+            THREE.MathUtils.lerp(p1.y, p2.y, alpha)
+        ));
+    }
+    return resampled;
+}
+
+function getContourPoints(shapeType, radius, segments = 96) {
+    if (shapeType === "Round") {
+        const pts = [];
+        for (let i = 0; i < segments; i++) {
+            const a = (i / segments) * Math.PI * 2 - Math.PI;
+            pts.push(new THREE.Vector2(Math.cos(a) * radius, Math.sin(a) * radius));
+        }
+        return pts;
+    }
+
+    if (shapeType === "Square") {
+        const half = radius * 0.88;
+        const corner = Math.min(half * 0.24, radius * 0.22);
+        const inner = half - corner;
+        const perEdge = 16;
+        const raw = [];
+
+        const corners = [
+            { cx: inner, cy: inner, start: 0 },
+            { cx: -inner, cy: inner, start: Math.PI * 0.5 },
+            { cx: -inner, cy: -inner, start: Math.PI },
+            { cx: inner, cy: -inner, start: Math.PI * 1.5 }
+        ];
+
+        corners.forEach(c => {
+            for (let i = 0; i <= perEdge; i++) {
+                const a = c.start + (i / perEdge) * (Math.PI * 0.5);
+                raw.push(new THREE.Vector2(
+                    c.cx + Math.cos(a) * corner,
+                    c.cy + Math.sin(a) * corner
+                ));
+            }
         });
 
-    });
+        raw.sort((p1, p2) => Math.atan2(p1.y, p1.x) - Math.atan2(p2.y, p2.x));
+        return dedupeAndResampleContour(raw, segments);
+    }
 
+    // Heart shape centered slightly so (0, 0) lies cleanly inside all rays
+    const raw = [];
+    const scale = radius / 15.2;
+    const denseSteps = 160;
+    for (let i = 0; i < denseSteps; i++) {
+        const t = (i / denseSteps) * Math.PI * 2;
+        const hx = 16 * Math.pow(Math.sin(t), 3);
+        const hy = (
+            13 * Math.cos(t) -
+            5 * Math.cos(2 * t) -
+            2 * Math.cos(3 * t) -
+            Math.cos(4 * t) + 3.2
+        );
+        raw.push(new THREE.Vector2(hx * scale, hy * scale));
+    }
+    raw.sort((p1, p2) => Math.atan2(p1.y, p1.x) - Math.atan2(p2.y, p2.x));
+    return dedupeAndResampleContour(raw, segments);
 }
 
-setupSingleChoice(flavourOptions, value => cake.flavour = value);
-setupSingleChoice(shapeOptions, value => cake.shape = value);
-setupSingleChoice(sizeOptions, value => cake.size = value);
+function intersectRayWithContour(contour, angle) {
+    const dx = Math.cos(angle);
+    const dy = Math.sin(angle);
+    let bestT = Infinity;
 
-// Multiple topping selection
+    for (let i = 0; i < contour.length; i++) {
+        const p1 = contour[i];
+        const p2 = contour[(i + 1) % contour.length];
+        const sx = p2.x - p1.x;
+        const sy = p2.y - p1.y;
+        const denom = dx * sy - dy * sx;
+        if (Math.abs(denom) < 1e-8) continue;
 
-toppingOptions.forEach(option => {
-
-    option.addEventListener("click", () => {
-
-        const topping = option.dataset.topping;
-
-        if (cake.toppings.includes(topping)) {
-
-            cake.toppings = cake.toppings.filter(item => item !== topping);
-
-            option.classList.remove("active");
-            option.setAttribute("aria-pressed", "false");
-
-        } else {
-
-            cake.toppings.push(topping);
-
-            option.classList.add("active");
-            option.setAttribute("aria-pressed", "true");
-
+        const t = (p1.x * sy - p1.y * sx) / denom;
+        const u = (p1.x * dy - p1.y * dx) / denom;
+        if (t >= 0 && u >= -1e-4 && u <= 1 + 1e-4 && t < bestT) {
+            bestT = t;
         }
+    }
 
-        updateCake();
+    if (!Number.isFinite(bestT)) return contour[0].clone();
+    return new THREE.Vector2(dx * bestT, dy * bestT);
+}
 
+function getSliceArcPoints(contour) {
+    const startPt = intersectRayWithContour(contour, CUT_END);
+    const endPt = intersectRayWithContour(contour, CUT_START);
+    const arcPts = [startPt];
+
+    const wrapped = contour.map(p => {
+        let a = Math.atan2(p.y, p.x);
+        if (a < CUT_END) a += Math.PI * 2;
+        return { p, a };
+    }).sort((a, b) => a.a - b.a);
+
+    const cutLimit = CUT_START + Math.PI * 2;
+    for (const item of wrapped) {
+        if (item.a > CUT_END + 0.01 && item.a < cutLimit - 0.01) {
+            arcPts.push(item.p);
+        }
+    }
+    arcPts.push(endPt);
+    return arcPts;
+}
+
+function buildSolidShape(shapeType, radius, isCutaway) {
+    const contour = getContourPoints(shapeType, radius);
+    const shape = new THREE.Shape();
+
+    if (!isCutaway) {
+        shape.moveTo(contour[0].x, contour[0].y);
+        for (let i = 1; i < contour.length; i++) {
+            shape.lineTo(contour[i].x, contour[i].y);
+        }
+        shape.closePath();
+        return shape;
+    }
+
+    const arcPts = getSliceArcPoints(contour);
+    shape.moveTo(0, 0);
+    for (const p of arcPts) {
+        shape.lineTo(p.x, p.y);
+    }
+    shape.closePath();
+    return shape;
+}
+
+function buildRingWallShape(shapeType, innerR, outerR, isCutaway) {
+    const outerContour = getContourPoints(shapeType, outerR);
+    const innerContour = getContourPoints(shapeType, innerR);
+    const shape = new THREE.Shape();
+
+    if (!isCutaway) {
+        shape.moveTo(outerContour[0].x, outerContour[0].y);
+        for (let i = 1; i < outerContour.length; i++) {
+            shape.lineTo(outerContour[i].x, outerContour[i].y);
+        }
+        shape.closePath();
+
+        const hole = new THREE.Path();
+        hole.moveTo(innerContour[innerContour.length - 1].x, innerContour[innerContour.length - 1].y);
+        for (let i = innerContour.length - 2; i >= 0; i--) {
+            hole.lineTo(innerContour[i].x, innerContour[i].y);
+        }
+        hole.closePath();
+        shape.holes.push(hole);
+        return shape;
+    }
+
+    const outerArc = getSliceArcPoints(outerContour);
+    const innerArc = getSliceArcPoints(innerContour);
+
+    shape.moveTo(outerArc[0].x, outerArc[0].y);
+    for (let i = 1; i < outerArc.length; i++) {
+        shape.lineTo(outerArc[i].x, outerArc[i].y);
+    }
+    for (let i = innerArc.length - 1; i >= 0; i--) {
+        shape.lineTo(innerArc[i].x, innerArc[i].y);
+    }
+    shape.closePath();
+    return shape;
+}
+
+function createExtrudedMesh(shape, depth, material, bevel = 0.02) {
+    const effectiveDepth = Math.max(0.02, depth - bevel * 2);
+    const geom = new THREE.ExtrudeGeometry(shape, {
+        depth: effectiveDepth,
+        bevelEnabled: bevel > 0,
+        bevelSegments: 3,
+        steps: 1,
+        bevelSize: bevel,
+        bevelThickness: bevel,
+        curveSegments: 24
+    });
+    geom.rotateX(-Math.PI / 2);
+    geom.translate(0, bevel, 0);
+    const mesh = new THREE.Mesh(geom, material);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    return mesh;
+}
+
+function isInCutawayWedge(x3d, z3d) {
+    if (!cake.sliceView) return false;
+    const angle2d = Math.atan2(-z3d, x3d);
+    return angle2d >= CUT_START - 0.12 && angle2d <= CUT_END + 0.12;
+}
+
+/* ---------------- 3D DECORATION BUILDERS ---------------- */
+
+function createCreamSwirl(colorHex) {
+    const group = new THREE.Group();
+    const mat = new THREE.MeshStandardMaterial({
+        color: colorHex,
+        roughness: 0.42,
+        metalness: 0.02
     });
 
+    const tiers = [
+        { r: 0.095, tube: 0.036, y: 0.025 },
+        { r: 0.068, tube: 0.03, y: 0.068 },
+        { r: 0.04, tube: 0.024, y: 0.105 }
+    ];
+
+    tiers.forEach(t => {
+        const mesh = new THREE.Mesh(new THREE.TorusGeometry(t.r, t.tube, 10, 18), mat);
+        mesh.rotation.x = Math.PI / 2;
+        mesh.position.y = t.y;
+        mesh.castShadow = true;
+        group.add(mesh);
+    });
+
+    const peak = new THREE.Mesh(new THREE.ConeGeometry(0.036, 0.075, 14), mat);
+    peak.position.y = 0.145;
+    peak.castShadow = true;
+    group.add(peak);
+
+    return group;
+}
+
+function createStrawberry() {
+    const group = new THREE.Group();
+    const berryPts = [
+        new THREE.Vector2(0, 0),
+        new THREE.Vector2(0.055, 0.03),
+        new THREE.Vector2(0.088, 0.095),
+        new THREE.Vector2(0.078, 0.155),
+        new THREE.Vector2(0.038, 0.185),
+        new THREE.Vector2(0, 0.19)
+    ];
+    const berryGeom = new THREE.LatheGeometry(berryPts, 16);
+    const berryMat = new THREE.MeshStandardMaterial({
+        map: getStrawberryTexture(),
+        roughness: 0.34,
+        metalness: 0.04
+    });
+    const berry = new THREE.Mesh(berryGeom, berryMat);
+    berry.castShadow = true;
+    group.add(berry);
+
+    const leafMat = new THREE.MeshStandardMaterial({
+        color: "#3f7d3a",
+        roughness: 0.65,
+        side: THREE.DoubleSide
+    });
+    for (let i = 0; i < 6; i++) {
+        const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.026, 0.075, 4), leafMat);
+        const angle = (i / 6) * Math.PI * 2;
+        leaf.position.set(Math.cos(angle) * 0.035, 0.182, Math.sin(angle) * 0.035);
+        leaf.rotation.z = -Math.PI / 2.2;
+        leaf.rotation.y = -angle;
+        group.add(leaf);
+    }
+
+    return group;
+}
+
+function createBlueberry() {
+    const group = new THREE.Group();
+    const mat = new THREE.MeshStandardMaterial({
+        color: "#323c6e",
+        roughness: 0.55,
+        metalness: 0.05
+    });
+    const berry = new THREE.Mesh(new THREE.SphereGeometry(0.052, 14, 12), mat);
+    berry.scale.set(1, 0.85, 1);
+    berry.position.y = 0.044;
+    berry.castShadow = true;
+    group.add(berry);
+
+    const crown = new THREE.Mesh(
+        new THREE.TorusGeometry(0.015, 0.005, 6, 10),
+        new THREE.MeshStandardMaterial({ color: "#232a4f", roughness: 0.7 })
+    );
+    crown.rotation.x = Math.PI / 2;
+    crown.position.y = 0.088;
+    group.add(crown);
+
+    return group;
+}
+
+function createCherry() {
+    const group = new THREE.Group();
+    const cherryMat = new THREE.MeshPhysicalMaterial({
+        color: "#8f1122",
+        roughness: 0.14,
+        metalness: 0.04,
+        clearcoat: 0.9,
+        clearcoatRoughness: 0.12
+    });
+    const fruit = new THREE.Mesh(new THREE.SphereGeometry(0.068, 16, 14), cherryMat);
+    fruit.position.y = 0.065;
+    fruit.castShadow = true;
+    group.add(fruit);
+
+    const curve = new THREE.QuadraticBezierCurve3(
+        new THREE.Vector3(0, 0.125, 0),
+        new THREE.Vector3(0.02, 0.21, 0.01),
+        new THREE.Vector3(0.055, 0.26, -0.01)
+    );
+    const stem = new THREE.Mesh(
+        new THREE.TubeGeometry(curve, 10, 0.007, 6, false),
+        new THREE.MeshStandardMaterial({ color: "#4f6d31", roughness: 0.65 })
+    );
+    stem.castShadow = true;
+    group.add(stem);
+
+    return group;
+}
+
+function createChocolateCurl() {
+    const group = new THREE.Group();
+    const chocMat = new THREE.MeshStandardMaterial({
+        color: "#3c2117",
+        roughness: 0.28,
+        metalness: 0.06,
+        side: THREE.DoubleSide
+    });
+    const curl = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.045, 0.045, 0.14, 14, 1, true, 0, Math.PI * 1.45),
+        chocMat
+    );
+    curl.rotation.z = Math.PI / 2.6;
+    curl.position.y = 0.055;
+    curl.castShadow = true;
+    group.add(curl);
+    return group;
+}
+
+function createCookiePiece() {
+    const group = new THREE.Group();
+    const pivot = new THREE.Group();
+    const darkMat = new THREE.MeshStandardMaterial({ color: "#2b1d19", roughness: 0.72 });
+    const creamMat = new THREE.MeshStandardMaterial({ color: "#f8f4ec", roughness: 0.5 });
+
+    const disc1 = new THREE.Mesh(new THREE.CylinderGeometry(0.095, 0.095, 0.022, 18), darkMat);
+    const filling = new THREE.Mesh(new THREE.CylinderGeometry(0.088, 0.088, 0.02, 18), creamMat);
+    const disc2 = new THREE.Mesh(new THREE.CylinderGeometry(0.095, 0.095, 0.022, 18), darkMat);
+
+    disc1.position.y = -0.02;
+    disc2.position.y = 0.02;
+    [disc1, filling, disc2].forEach(m => { m.castShadow = true; pivot.add(m); });
+
+    pivot.rotation.x = Math.PI / 3.2;
+    pivot.position.y = 0.068;
+    group.add(pivot);
+    return group;
+}
+
+function createMacaron(shellHex) {
+    const group = new THREE.Group();
+    const pivot = new THREE.Group();
+    const shellMat = new THREE.MeshStandardMaterial({ color: shellHex, roughness: 0.38 });
+    const fillingMat = new THREE.MeshStandardMaterial({ color: "#fbf3e4", roughness: 0.45 });
+
+    const bottom = new THREE.Mesh(new THREE.SphereGeometry(0.095, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.5), shellMat);
+    bottom.scale.set(1, 0.48, 1);
+    bottom.rotation.x = Math.PI;
+    bottom.position.y = -0.015;
+
+    const cream = new THREE.Mesh(new THREE.CylinderGeometry(0.088, 0.088, 0.028, 16), fillingMat);
+
+    const top = new THREE.Mesh(new THREE.SphereGeometry(0.095, 16, 10, 0, Math.PI * 2, 0, Math.PI * 0.5), shellMat);
+    top.scale.set(1, 0.48, 1);
+    top.position.y = 0.015;
+
+    [bottom, cream, top].forEach(m => { m.castShadow = true; pivot.add(m); });
+    pivot.rotation.x = Math.PI / 2.8;
+    pivot.position.y = 0.078;
+    group.add(pivot);
+    return group;
+}
+
+function createIcingDrip(colorHex, shapeType, radius, topY, totalStackHeight) {
+    const group = new THREE.Group();
+    const dripMat = new THREE.MeshPhysicalMaterial({
+        color: colorHex,
+        roughness: 0.18,
+        metalness: 0.02,
+        clearcoat: 0.85,
+        clearcoatRoughness: 0.14
+    });
+
+    const glazeShape = buildSolidShape(shapeType, radius + 0.056, cake.sliceView);
+    const glazeCap = createExtrudedMesh(glazeShape, 0.028, dripMat, 0.008);
+    glazeCap.position.y = topY - 0.014;
+    group.add(glazeCap);
+
+    const dripCount = shapeType === "Round" ? 32 : 36;
+    const dripPts = getContourPoints(shapeType, radius + 0.054, dripCount);
+    dripPts.forEach((pt, idx) => {
+        const x = pt.x;
+        const z = -pt.y;
+        if (isInCutawayWedge(x, z)) return;
+
+        const wave = Math.abs(Math.sin(idx * 1.45 + 0.6));
+        const dropLen = Math.min(totalStackHeight * 0.72, 0.13 + wave * 0.36);
+
+        const strand = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.024, 0.019, dropLen, 10),
+            dripMat
+        );
+        strand.position.set(x, topY - dropLen * 0.5, z);
+        strand.castShadow = true;
+        group.add(strand);
+
+        const tip = new THREE.Mesh(new THREE.SphereGeometry(0.021, 10, 10), dripMat);
+        tip.position.set(x, topY - dropLen, z);
+        tip.castShadow = true;
+        group.add(tip);
+    });
+
+    return group;
+}
+
+function createRainbowSprinkles(shapeType, radius, totalStackHeight) {
+    const sprinkleColors = ["#ff7aa2", "#ffd166", "#6ec6ff", "#8ee0a1", "#c6a4f7", "#fff5e4"];
+    const contour = getContourPoints(shapeType, radius + 0.058, 120);
+    const validPts = contour.filter(pt => !isInCutawayWedge(pt.x, -pt.y));
+    if (!validPts.length) return null;
+
+    const count = 180;
+    const geom = new THREE.CylinderGeometry(0.009, 0.009, 0.04, 6);
+    const mat = new THREE.MeshStandardMaterial({ roughness: 0.35, metalness: 0.05 });
+    const inst = new THREE.InstancedMesh(geom, mat, count);
+    inst.castShadow = false;
+
+    const dummy = new THREE.Object3D();
+    const bandHeight = Math.min(0.32, totalStackHeight * 0.28);
+    let seed = 109;
+    const rand = () => {
+        seed = (seed * 1664525 + 1013904223) % 4294967296;
+        return seed / 4294967296;
+    };
+
+    for (let i = 0; i < count; i++) {
+        const pt = validPts[Math.floor(rand() * validPts.length)];
+        const x = pt.x;
+        const z = -pt.y;
+        const y = 0.04 + rand() * bandHeight;
+        const outwardAngle = Math.atan2(x, z);
+
+        dummy.position.set(x, y, z);
+        dummy.rotation.set(0, outwardAngle, (rand() - 0.5) * 2.4);
+        dummy.updateMatrix();
+        inst.setMatrixAt(i, dummy.matrix);
+        inst.setColorAt(i, new THREE.Color(sprinkleColors[i % sprinkleColors.length]));
+    }
+    inst.instanceMatrix.needsUpdate = true;
+    if (inst.instanceColor) inst.instanceColor.needsUpdate = true;
+    return inst;
+}
+
+function createEdibleFlower(petalHex) {
+    const group = new THREE.Group();
+    const petalMat = new THREE.MeshStandardMaterial({ color: petalHex, roughness: 0.48 });
+    const centerMat = new THREE.MeshStandardMaterial({ color: "#efc458", roughness: 0.5 });
+
+    for (let i = 0; i < 5; i++) {
+        const a = (i / 5) * Math.PI * 2;
+        const petal = new THREE.Mesh(new THREE.SphereGeometry(0.042, 12, 10), petalMat);
+        petal.scale.set(1, 0.35, 1.35);
+        petal.position.set(Math.cos(a) * 0.048, 0.018, Math.sin(a) * 0.048);
+        petal.rotation.y = -a;
+        petal.castShadow = true;
+        group.add(petal);
+    }
+
+    const center = new THREE.Mesh(new THREE.SphereGeometry(0.026, 10, 10), centerMat);
+    center.position.y = 0.026;
+    group.add(center);
+
+    return group;
+}
+
+function createFondantTopper(type, colorHex) {
+    const group = new THREE.Group();
+    const mat = new THREE.MeshStandardMaterial({
+        color: colorHex,
+        roughness: 0.42,
+        metalness: 0.02
+    });
+
+    if (type === "Flower") {
+        for (let i = 0; i < 6; i++) {
+            const a = (i / 6) * Math.PI * 2;
+            const petal = new THREE.Mesh(new THREE.SphereGeometry(0.09, 14, 12), mat);
+            petal.scale.set(0.9, 0.4, 1.35);
+            petal.position.set(Math.cos(a) * 0.1, 0.04, Math.sin(a) * 0.1);
+            petal.rotation.y = -a;
+            petal.rotation.z = 0.25;
+            petal.castShadow = true;
+            group.add(petal);
+        }
+        const bud = new THREE.Mesh(new THREE.SphereGeometry(0.055, 14, 12), mat);
+        bud.position.y = 0.07;
+        bud.castShadow = true;
+        group.add(bud);
+        return group;
+    }
+
+    if (type === "Bow") {
+        [-1, 1].forEach(dir => {
+            const loop = new THREE.Mesh(new THREE.TorusGeometry(0.095, 0.032, 10, 20), mat);
+            loop.position.set(dir * 0.1, 0.11, 0);
+            loop.rotation.y = dir * 0.25;
+            loop.scale.set(1.25, 0.85, 0.7);
+            loop.castShadow = true;
+            group.add(loop);
+        });
+        const knot = new THREE.Mesh(new THREE.SphereGeometry(0.045, 12, 12), mat);
+        knot.position.y = 0.11;
+        knot.castShadow = true;
+        group.add(knot);
+        return group;
+    }
+
+    if (type === "Heart") {
+        const shape = new THREE.Shape();
+        shape.moveTo(0, 0.04);
+        shape.bezierCurveTo(0.06, 0.16, 0.22, 0.14, 0.22, 0.02);
+        shape.bezierCurveTo(0.22, -0.09, 0.08, -0.17, 0, -0.24);
+        shape.bezierCurveTo(-0.08, -0.17, -0.22, -0.09, -0.22, 0.02);
+        shape.bezierCurveTo(-0.22, 0.14, -0.06, 0.16, 0, 0.04);
+        const geom = new THREE.ExtrudeGeometry(shape, {
+            depth: 0.05,
+            bevelEnabled: true,
+            bevelSize: 0.015,
+            bevelThickness: 0.015,
+            curveSegments: 16
+        });
+        geom.center();
+        const mesh = new THREE.Mesh(geom, mat);
+        mesh.position.y = 0.22;
+        mesh.castShadow = true;
+        group.add(mesh);
+        return group;
+    }
+
+    if (type === "Star") {
+        const shape = new THREE.Shape();
+        const spikes = 5;
+        const outerR = 0.2;
+        const innerR = 0.09;
+        for (let i = 0; i < spikes * 2; i++) {
+            const r = i % 2 === 0 ? outerR : innerR;
+            const a = (i / (spikes * 2)) * Math.PI * 2 + Math.PI / 2;
+            const x = Math.cos(a) * r;
+            const y = Math.sin(a) * r;
+            if (i === 0) shape.moveTo(x, y);
+            else shape.lineTo(x, y);
+        }
+        shape.closePath();
+        const geom = new THREE.ExtrudeGeometry(shape, {
+            depth: 0.045,
+            bevelEnabled: true,
+            bevelSize: 0.012,
+            bevelThickness: 0.012
+        });
+        geom.center();
+        const mesh = new THREE.Mesh(geom, mat);
+        mesh.position.y = 0.21;
+        mesh.castShadow = true;
+        group.add(mesh);
+        return group;
+    }
+
+    return group;
+}
+
+/* ---------------- THREE.JS SCENE SETUP ---------------- */
+
+const canvas = document.getElementById("cakeCanvas");
+const viewport = document.getElementById("cakeViewport");
+const fallback = document.getElementById("viewportFallback");
+
+let renderer, scene, camera, controls, cakeRoot;
+let cameraTransition = null;
+let autoRotate = false;
+
+function disposeGroup(group) {
+    group.traverse(obj => {
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material) {
+            const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+            mats.forEach(m => {
+                if (m.map && m.map.userData?.disposable) m.map.dispose();
+                m.dispose();
+            });
+        }
+    });
+    group.clear();
+}
+
+function buildPedestalStand() {
+    const stand = new THREE.Group();
+    const ceramicMat = new THREE.MeshStandardMaterial({
+        color: "#fdfaf4",
+        roughness: 0.24,
+        metalness: 0.05
+    });
+    const rimMat = new THREE.MeshStandardMaterial({
+        color: "#d9c2a3",
+        roughness: 0.35,
+        metalness: 0.35
+    });
+
+    // Top plate
+    const plate = new THREE.Mesh(new THREE.CylinderGeometry(1.78, 1.72, 0.08, 64), ceramicMat);
+    plate.position.y = -0.04;
+    plate.receiveShadow = true;
+    plate.castShadow = true;
+    stand.add(plate);
+
+    const goldTrim = new THREE.Mesh(new THREE.TorusGeometry(1.76, 0.014, 10, 64), rimMat);
+    goldTrim.rotation.x = Math.PI / 2;
+    goldTrim.position.y = -0.005;
+    stand.add(goldTrim);
+
+    // Pedestal foot
+    const footPts = [
+        new THREE.Vector2(0.01, -0.52),
+        new THREE.Vector2(0.75, -0.52),
+        new THREE.Vector2(0.72, -0.45),
+        new THREE.Vector2(0.28, -0.34),
+        new THREE.Vector2(0.22, -0.14),
+        new THREE.Vector2(0.45, -0.08),
+        new THREE.Vector2(0.01, -0.08)
+    ];
+    const foot = new THREE.Mesh(new THREE.LatheGeometry(footPts, 48), ceramicMat);
+    foot.castShadow = true;
+    foot.receiveShadow = true;
+    stand.add(foot);
+
+    // Soft studio floor receiver
+    const shadowFloor = new THREE.Mesh(
+        new THREE.CircleGeometry(4.5, 48),
+        new THREE.ShadowMaterial({ opacity: 0.14 })
+    );
+    shadowFloor.rotation.x = -Math.PI / 2;
+    shadowFloor.position.y = -0.52;
+    shadowFloor.receiveShadow = true;
+    stand.add(shadowFloor);
+
+    return stand;
+}
+
+function rebuildCake3D() {
+    if (!cakeRoot) return;
+    disposeGroup(cakeRoot);
+
+    const dims = SIZE_DIMENSIONS[cake.size];
+    const radius = dims.radius;
+    const hScale = dims.heightScale;
+
+    // Layer stack blueprint
+    const layerSpecs = {
+        Single: [
+            { type: "sponge", h: 0.34 * hScale },
+            { type: "cream", h: 0.10 * hScale },
+            { type: "sponge", h: 0.34 * hScale }
+        ],
+        Double: [
+            { type: "sponge", h: 0.48 * hScale },
+            { type: "cream", h: 0.16 * hScale },
+            { type: "sponge", h: 0.48 * hScale }
+        ],
+        Triple: [
+            { type: "sponge", h: 0.40 * hScale },
+            { type: "cream", h: 0.14 * hScale },
+            { type: "sponge", h: 0.40 * hScale },
+            { type: "cream", h: 0.14 * hScale },
+            { type: "sponge", h: 0.40 * hScale }
+        ]
+    }[cake.layers];
+
+    const spongeColor = SPONGE_COLOURS[cake.flavour];
+    const creamColor = FILLING_HEX[cake.fillingColour];
+    const frostingColor = FROSTING_HEX[cake.frostingColour];
+
+    const spongeMat = new THREE.MeshStandardMaterial({
+        map: getSpongeTexture(spongeColor),
+        roughness: 0.88,
+        metalness: 0.0
+    });
+
+    const creamMat = new THREE.MeshStandardMaterial({
+        color: creamColor,
+        roughness: 0.42,
+        metalness: 0.02
+    });
+
+    const isTextured = cake.frostingStyle === "Textured";
+    const isLayered = cake.frostingStyle === "Layered";
+
+    const frostingMat = new THREE.MeshStandardMaterial({
+        color: frostingColor,
+        roughness: isTextured ? 0.56 : 0.4,
+        metalness: 0.02,
+        bumpMap: isTextured ? getFrostingBumpTexture() : null,
+        bumpScale: isTextured ? 0.032 : 0
+    });
+
+    // Build internal sponge + visible cream layers
+    let currentY = 0;
+    const creamMidHeights = [];
+    const innerRadius = isLayered ? radius : radius - 0.005;
+
+    const innerSpongeShape = buildSolidShape(cake.shape, innerRadius, cake.sliceView);
+    const innerCreamShape = buildSolidShape(cake.shape, innerRadius + (isLayered ? 0.015 : -0.002), cake.sliceView);
+
+    layerSpecs.forEach(layer => {
+        const isCream = layer.type === "cream";
+        const mesh = createExtrudedMesh(
+            isCream ? innerCreamShape : innerSpongeShape,
+            layer.h,
+            isCream ? creamMat : spongeMat,
+            isCream ? 0.012 : 0.006
+        );
+        mesh.position.y = currentY;
+        cakeRoot.add(mesh);
+
+        if (isCream) {
+            creamMidHeights.push(currentY + layer.h * 0.5);
+        }
+        currentY += layer.h;
+    });
+
+    const totalStackHeight = currentY;
+    const topCapThickness = 0.055;
+
+    // Exterior Frosting
+    if (isLayered) {
+        // Semi-naked / layered aesthetic: scraped translucent-feel frosting bands + luscious top frosting crown
+        const bandMat = frostingMat.clone();
+        bandMat.transparent = true;
+        bandMat.opacity = 0.62;
+
+        const lowerBandShape = buildRingWallShape(cake.shape, radius - 0.004, radius + 0.036, cake.sliceView);
+        const lowerBand = createExtrudedMesh(lowerBandShape, totalStackHeight * 0.28, bandMat, 0.012);
+        lowerBand.position.y = 0;
+        cakeRoot.add(lowerBand);
+
+        // Piped cream accent pearls along visible filling seams
+        const seamContour = getContourPoints(cake.shape, radius + 0.02, 34);
+        creamMidHeights.forEach(seamY => {
+            seamContour.forEach(pt => {
+                const x = pt.x;
+                const z = -pt.y;
+                if (isInCutawayWedge(x, z)) return;
+                const pearl = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 8), creamMat);
+                pearl.position.set(x, seamY, z);
+                pearl.castShadow = true;
+                cakeRoot.add(pearl);
+            });
+        });
+
+        // Thick top frosting crown
+        const topShape = buildSolidShape(cake.shape, radius + 0.048, cake.sliceView);
+        const topCap = createExtrudedMesh(topShape, topCapThickness + 0.025, frostingMat, 0.022);
+        topCap.position.y = totalStackHeight - 0.01;
+        cakeRoot.add(topCap);
+    } else {
+        // Smooth or Textured full buttercream wrap
+        const wallShape = buildRingWallShape(cake.shape, radius - 0.006, radius + 0.052, cake.sliceView);
+        const wallMesh = createExtrudedMesh(wallShape, totalStackHeight, frostingMat, 0.006);
+        wallMesh.position.y = 0;
+        cakeRoot.add(wallMesh);
+
+        const topShape = buildSolidShape(cake.shape, radius + 0.052, cake.sliceView);
+        const topCap = createExtrudedMesh(topShape, topCapThickness, frostingMat, 0.022);
+        topCap.position.y = totalStackHeight - 0.005;
+        cakeRoot.add(topCap);
+
+        // Delicate piped base border in cream colour so cream choice subtly accents the base
+        if (!cake.toppings.includes("Rainbow sprinkles")) {
+            const basePts = getContourPoints(cake.shape, radius + 0.068, 36);
+            basePts.forEach(pt => {
+                const x = pt.x;
+                const z = -pt.y;
+                if (isInCutawayWedge(x, z)) return;
+                const bead = new THREE.Mesh(new THREE.SphereGeometry(0.038, 10, 10), creamMat);
+                bead.position.set(x, 0.028, z);
+                bead.castShadow = true;
+                cakeRoot.add(bead);
+            });
+        }
+    }
+
+    const baseTopY = isLayered
+        ? totalStackHeight + topCapThickness + 0.015
+        : totalStackHeight + topCapThickness - 0.005;
+    let topY = baseTopY;
+
+    // Optional icing drip glaze
+    if (cake.toppings.includes("Pink drip")) {
+        cakeRoot.add(createIcingDrip("#f59ec3", cake.shape, radius, baseTopY, totalStackHeight));
+        topY += 0.015;
+    } else if (cake.toppings.includes("Chocolate drip")) {
+        cakeRoot.add(createIcingDrip("#3b1e14", cake.shape, radius, baseTopY, totalStackHeight));
+        topY += 0.015;
+    }
+
+    // Optional rainbow sprinkles around base
+    if (cake.toppings.includes("Rainbow sprinkles")) {
+        const sprinkles = createRainbowSprinkles(cake.shape, radius, totalStackHeight);
+        if (sprinkles) cakeRoot.add(sprinkles);
+    }
+
+    // Cream swirls around rim
+    if (cake.toppings.includes("Cream swirls")) {
+        const swirlCount = cake.size === "2kg" ? 14 : cake.size === "1kg" ? 12 : 10;
+        const swirlPts = getContourPoints(cake.shape, radius * 0.78, swirlCount);
+        swirlPts.forEach(pt => {
+            const x = pt.x;
+            const z = -pt.y;
+            if (isInCutawayWedge(x, z)) return;
+            const swirl = createCreamSwirl(creamColor);
+            swirl.position.set(x, topY, z);
+            cakeRoot.add(swirl);
+        });
+    }
+
+    // Gold pearls along top rim
+    if (cake.toppings.includes("Gold pearls")) {
+        const pearlMat = new THREE.MeshStandardMaterial({
+            color: "#e6c373",
+            roughness: 0.22,
+            metalness: 0.78
+        });
+        const pearlPts = getContourPoints(cake.shape, radius * 0.91, 28);
+        pearlPts.forEach((pt, idx) => {
+            const x = pt.x;
+            const z = -pt.y;
+            if (isInCutawayWedge(x, z)) return;
+            const pearl = new THREE.Mesh(
+                new THREE.SphereGeometry(idx % 2 === 0 ? 0.03 : 0.02, 10, 10),
+                pearlMat
+            );
+            pearl.position.set(x, topY + 0.022, z);
+            pearl.castShadow = true;
+            cakeRoot.add(pearl);
+        });
+    }
+
+    // Fruit & Cookie / Macaron / Flower / Chocolate Curl toppings
+    const NON_RING_TOPPINGS = new Set([
+        "Cream swirls",
+        "Gold pearls",
+        "Pink drip",
+        "Chocolate drip",
+        "Rainbow sprinkles"
+    ]);
+    const activeToppings = cake.toppings.filter(t => !NON_RING_TOPPINGS.has(t));
+    const hasCenterPiece = cake.fondant !== "None" || Boolean(cake.topperText.trim());
+
+    if (activeToppings.length > 0) {
+        const ringRadius = radius * (cake.toppings.includes("Cream swirls") ? 0.56 : 0.68);
+        const totalSlots = Math.max(8, activeToppings.length * 4);
+        const ringPts = getContourPoints(cake.shape, ringRadius, totalSlots);
+
+        ringPts.forEach((pt, idx) => {
+            const x = pt.x;
+            const z = -pt.y;
+            if (isInCutawayWedge(x, z)) return;
+            if (hasCenterPiece && Math.hypot(x, z) < 0.34) return;
+
+            const toppingName = activeToppings[idx % activeToppings.length];
+            let obj = null;
+
+            if (toppingName === "Strawberries") obj = createStrawberry();
+            else if (toppingName === "Blueberries") obj = createBlueberry();
+            else if (toppingName === "Cherries") obj = createCherry();
+            else if (toppingName === "Chocolate curls") obj = createChocolateCurl();
+            else if (toppingName === "Cookie pieces") obj = createCookiePiece();
+            else if (toppingName === "Macarons") {
+                const macColors = ["#f3c6ce", "#c6d8be", "#d3c5e6", "#f5df9d"];
+                obj = createMacaron(macColors[idx % macColors.length]);
+            }
+            else if (toppingName === "Edible flowers") {
+                const flowerColors = ["#f4c3cb", "#fff7ea", "#ccbde0", "#f6d98c"];
+                obj = createEdibleFlower(flowerColors[idx % flowerColors.length]);
+            }
+
+            if (obj) {
+                obj.position.set(x, topY, z);
+                obj.rotation.y += idx * 0.85;
+                cakeRoot.add(obj);
+            }
+        });
+    }
+
+    // Custom cake-top message plaque
+    const trimmedText = cake.topperText.trim();
+    if (trimmedText) {
+        const plaqueTex = createPlaqueTexture(trimmedText);
+        plaqueTex.userData = { disposable: true };
+        const plaqueW = Math.min(radius * (cake.sliceView ? 0.85 : 1.05), 1.24);
+        const plaqueH = plaqueW * 0.375;
+
+        const plaqueGeom = new THREE.BoxGeometry(plaqueW, 0.025, plaqueH);
+        const sideMat = new THREE.MeshStandardMaterial({ color: "#e8d2a6", roughness: 0.38, metalness: 0.3 });
+        const topMat = new THREE.MeshStandardMaterial({ map: plaqueTex, roughness: 0.45 });
+        const plaque = new THREE.Mesh(plaqueGeom, [sideMat, sideMat, topMat, sideMat, sideMat, sideMat]);
+        plaque.position.set(
+            cake.sliceView ? -0.18 : 0,
+            topY + 0.015,
+            cake.sliceView ? -0.06 : (cake.fondant !== "None" ? 0.22 : 0.04)
+        );
+        plaque.castShadow = true;
+        cakeRoot.add(plaque);
+    }
+
+    // Fondant centerpiece
+    if (cake.fondant !== "None") {
+        const fondantMesh = createFondantTopper(cake.fondant, FONDANT_HEX[cake.fondantColour]);
+        fondantMesh.position.set(
+            cake.sliceView ? -0.14 : 0,
+            topY,
+            trimmedText ? -0.28 : (cake.sliceView ? -0.12 : 0)
+        );
+        cakeRoot.add(fondantMesh);
+    }
+
+    // Center vertical focus nicely around half cake height
+    if (controls && !cameraTransition) {
+        controls.target.set(0, THREE.MathUtils.clamp(totalStackHeight * 0.48, 0.38, 0.72), 0);
+    }
+}
+
+/* ---------------- CAMERA PRESETS & CONTROLS ---------------- */
+
+const CAMERA_PRESETS = {
+    iso: { pos: new THREE.Vector3(2.9, 2.35, 3.15), target: new THREE.Vector3(0, 0.55, 0) },
+    top: { pos: new THREE.Vector3(0.01, 4.3, 0.35), target: new THREE.Vector3(0, 0.45, 0) },
+    side: { pos: new THREE.Vector3(4.0, 1.05, 0.0), target: new THREE.Vector3(0, 0.55, 0) },
+    front: { pos: new THREE.Vector3(0.0, 1.25, 4.1), target: new THREE.Vector3(0, 0.55, 0) }
+};
+
+function moveCameraTo(presetKey) {
+    const preset = CAMERA_PRESETS[presetKey];
+    if (!preset || !camera || !controls) return;
+    cameraTransition = {
+        pos: preset.pos.clone(),
+        target: preset.target.clone()
+    };
+}
+
+function zoomCamera(factor) {
+    if (!camera || !controls) return;
+    const offset = camera.position.clone().sub(controls.target);
+    const nextDist = THREE.MathUtils.clamp(offset.length() * factor, controls.minDistance, controls.maxDistance);
+    offset.setLength(nextDist);
+    camera.position.copy(controls.target).add(offset);
+    controls.update();
+}
+
+function init3DScene() {
+    try {
+        renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.06;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        scene = new THREE.Scene();
+
+        const width = viewport.clientWidth || 420;
+        const height = viewport.clientHeight || 360;
+        camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 40);
+        camera.position.copy(CAMERA_PRESETS.iso.pos);
+
+        // Warm bakery studio lighting
+        const hemiLight = new THREE.HemisphereLight("#fff9f0", "#b89c8b", 0.95);
+        scene.add(hemiLight);
+
+        const keyLight = new THREE.DirectionalLight("#fff4e3", 1.55);
+        keyLight.position.set(4.5, 6.5, 4.2);
+        keyLight.castShadow = true;
+        keyLight.shadow.mapSize.set(1024, 1024);
+        keyLight.shadow.camera.near = 1;
+        keyLight.shadow.camera.far = 18;
+        keyLight.shadow.camera.left = -2.8;
+        keyLight.shadow.camera.right = 2.8;
+        keyLight.shadow.camera.top = 2.8;
+        keyLight.shadow.camera.bottom = -2.8;
+        keyLight.shadow.bias = -0.0005;
+        scene.add(keyLight);
+
+        const fillLight = new THREE.DirectionalLight("#fcece3", 0.65);
+        fillLight.position.set(-4.5, 2.5, 2.5);
+        scene.add(fillLight);
+
+        const rimLight = new THREE.DirectionalLight("#fff7ec", 0.75);
+        rimLight.position.set(-1.5, 4.0, -5.0);
+        scene.add(rimLight);
+
+        scene.add(buildPedestalStand());
+
+        cakeRoot = new THREE.Group();
+        scene.add(cakeRoot);
+
+        controls = new OrbitControls(camera, canvas);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.07;
+        controls.minDistance = 2.2;
+        controls.maxDistance = 6.8;
+        controls.maxPolarAngle = Math.PI * 0.49;
+        controls.target.copy(CAMERA_PRESETS.iso.target);
+        controls.autoRotateSpeed = 1.4;
+
+        controls.addEventListener("start", () => {
+            cameraTransition = null;
+        });
+
+        const resizeRenderer = () => {
+            const w = viewport.clientWidth;
+            const h = viewport.clientHeight;
+            if (!w || !h) return;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h, false);
+        };
+
+        resizeRenderer();
+        new ResizeObserver(resizeRenderer).observe(viewport);
+
+        const animate = () => {
+            requestAnimationFrame(animate);
+
+            if (cameraTransition) {
+                camera.position.lerp(cameraTransition.pos, 0.12);
+                controls.target.lerp(cameraTransition.target, 0.12);
+                if (
+                    camera.position.distanceTo(cameraTransition.pos) < 0.02 &&
+                    controls.target.distanceTo(cameraTransition.target) < 0.02
+                ) {
+                    cameraTransition = null;
+                }
+            }
+
+            controls.autoRotate = autoRotate;
+            controls.update();
+            renderer.render(scene, camera);
+        };
+        animate();
+
+        rebuildCake3D();
+    } catch (err) {
+        console.error("3D preview unavailable:", err);
+        canvas.style.display = "none";
+        fallback.style.display = "flex";
+    }
+}
+
+/* ---------------- UI BINDINGS ---------------- */
+
+function updateCake() {
+    updateSummaryUI();
+    rebuildCake3D();
+}
+
+function setupSingleChoice(selector, onSelect) {
+    const items = document.querySelectorAll(selector);
+    items.forEach(item => {
+        item.addEventListener("click", () => {
+            items.forEach(el => el.classList.remove("active"));
+            item.classList.add("active");
+            onSelect(item);
+            updateCake();
+        });
+    });
+}
+
+setupSingleChoice("#flavourOptions .option-card", el => {
+    cake.flavour = el.dataset.value;
 });
 
-// Fondant shape selection
+setupSingleChoice('[data-group="shape"]', el => {
+    cake.shape = el.dataset.value;
+});
 
-fondantOptions.forEach(option => {
+setupSingleChoice('[data-group="size"]', el => {
+    cake.size = el.dataset.value;
+});
 
+setupSingleChoice('[data-group="layers"]', el => {
+    cake.layers = el.dataset.value;
+});
+
+const fillingSwatches = document.querySelectorAll("[data-filling-colour]");
+function setActiveFillingColour(colourName) {
+    cake.fillingColour = colourName;
+    fillingSwatches.forEach(s => {
+        s.classList.toggle("active", s.dataset.fillingColour === colourName);
+    });
+}
+
+function revealCreamIfHidden() {
+    if (!cake.sliceView && cake.frostingStyle !== "Layered") {
+        cake.sliceView = true;
+        const sliceBtn = document.getElementById("sliceToggleBtn");
+        sliceBtn.classList.add("active");
+        sliceBtn.setAttribute("aria-pressed", "true");
+    }
+}
+
+setupSingleChoice('[data-group="creamFlavour"]', el => {
+    cake.creamFlavour = el.dataset.value;
+    setActiveFillingColour(CREAM_DEFAULT_COLOURS[cake.creamFlavour]);
+    revealCreamIfHidden();
+});
+
+fillingSwatches.forEach(swatch => {
+    swatch.addEventListener("click", () => {
+        setActiveFillingColour(swatch.dataset.fillingColour);
+        revealCreamIfHidden();
+        updateCake();
+    });
+});
+
+setupSingleChoice('[data-group="frostingStyle"]', el => {
+    cake.frostingStyle = el.dataset.value;
+});
+
+setupSingleChoice("[data-frosting-colour]", el => {
+    cake.frostingColour = el.dataset.frostingColour;
+});
+
+document.querySelectorAll("[data-topping]").forEach(option => {
     option.addEventListener("click", () => {
-
-        fondantOptions.forEach(item => item.classList.remove("active"));
-
-        option.classList.add("active");
-
-        cake.fondant = option.dataset.fondant;
-
+        const topping = option.dataset.topping;
+        if (cake.toppings.includes(topping)) {
+            cake.toppings = cake.toppings.filter(item => item !== topping);
+        } else {
+            if (topping === "Pink drip") {
+                cake.toppings = cake.toppings.filter(item => item !== "Chocolate drip");
+            } else if (topping === "Chocolate drip") {
+                cake.toppings = cake.toppings.filter(item => item !== "Pink drip");
+            }
+            cake.toppings.push(topping);
+        }
+        syncAllControlsUI();
         updateCake();
-
     });
-
 });
 
-// Fondant colour selection
-
-fondantColourOptions.forEach(option => {
-
-    option.addEventListener("click", () => {
-
-        fondantColourOptions.forEach(item => item.classList.remove("active"));
-
-        option.classList.add("active");
-
-        cake.fondantColour = option.dataset.colour;
-
-        updateCake();
-
-    });
-
+setupSingleChoice("[data-fondant]", el => {
+    cake.fondant = el.dataset.fondant;
 });
 
-// Initial cake preview
+setupSingleChoice("[data-colour]", el => {
+    cake.fondantColour = el.dataset.colour;
+});
 
-updateCake();
+const topperInput = document.getElementById("topperTextInput");
+const topperPresets = document.querySelectorAll("[data-topper-preset]");
 
+topperInput.addEventListener("input", () => {
+    cake.topperText = topperInput.value;
+    topperPresets.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.topperPreset === topperInput.value);
+    });
+    updateCake();
+});
+
+topperPresets.forEach(btn => {
+    btn.addEventListener("click", () => {
+        const val = btn.dataset.topperPreset;
+        topperInput.value = val;
+        cake.topperText = val;
+        topperPresets.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        updateCake();
+    });
+});
+
+/* ---------------- INSPIRATION PRESETS ---------------- */
+
+const INSPIRATION_PRESETS = {
+    "strawberry-cloud": {
+        label: "Strawberry cloud",
+        flavour: "Vanilla",
+        shape: "Round",
+        size: "1kg",
+        layers: "Triple",
+        creamFlavour: "Strawberry Cream",
+        fillingColour: "Blush Berry",
+        frostingStyle: "Textured",
+        frostingColour: "Whipped Ivory",
+        toppings: ["Pink drip", "Rainbow sprinkles", "Cream swirls", "Cherries", "Strawberries"],
+        fondant: "None",
+        fondantColour: "Blush pink",
+        topperText: ""
+    },
+    "midnight": {
+        label: "Midnight",
+        flavour: "Chocolate",
+        shape: "Round",
+        size: "1kg",
+        layers: "Double",
+        creamFlavour: "Chocolate Ganache",
+        fillingColour: "Rich Cocoa",
+        frostingStyle: "Smooth",
+        frostingColour: "Dark Ganache",
+        toppings: ["Chocolate drip", "Chocolate curls", "Gold pearls", "Cherries"],
+        fondant: "None",
+        fondantColour: "Ivory",
+        topperText: ""
+    },
+    "petal-pink": {
+        label: "Petal pink",
+        flavour: "Red Velvet",
+        shape: "Heart",
+        size: "1kg",
+        layers: "Double",
+        creamFlavour: "Cream Cheese",
+        fillingColour: "Blush Berry",
+        frostingStyle: "Smooth",
+        frostingColour: "Blush Rose",
+        toppings: ["Cream swirls", "Edible flowers", "Macarons"],
+        fondant: "Flower",
+        fondantColour: "Blush pink",
+        topperText: "With Love"
+    }
+};
+
+function syncAllControlsUI() {
+    document.querySelectorAll("#flavourOptions .option-card").forEach(el => {
+        el.classList.toggle("active", el.dataset.value === cake.flavour);
+    });
+    document.querySelectorAll('[data-group="shape"]').forEach(el => {
+        el.classList.toggle("active", el.dataset.value === cake.shape);
+    });
+    document.querySelectorAll('[data-group="size"]').forEach(el => {
+        el.classList.toggle("active", el.dataset.value === cake.size);
+    });
+    document.querySelectorAll('[data-group="layers"]').forEach(el => {
+        el.classList.toggle("active", el.dataset.value === cake.layers);
+    });
+    document.querySelectorAll('[data-group="creamFlavour"]').forEach(el => {
+        el.classList.toggle("active", el.dataset.value === cake.creamFlavour);
+    });
+    setActiveFillingColour(cake.fillingColour);
+
+    document.querySelectorAll('[data-group="frostingStyle"]').forEach(el => {
+        el.classList.toggle("active", el.dataset.value === cake.frostingStyle);
+    });
+    document.querySelectorAll("[data-frosting-colour]").forEach(el => {
+        el.classList.toggle("active", el.dataset.frostingColour === cake.frostingColour);
+    });
+
+    document.querySelectorAll("[data-topping]").forEach(el => {
+        const active = cake.toppings.includes(el.dataset.topping);
+        el.classList.toggle("active", active);
+        el.setAttribute("aria-pressed", String(active));
+    });
+
+    document.querySelectorAll("[data-fondant]").forEach(el => {
+        el.classList.toggle("active", el.dataset.fondant === cake.fondant);
+    });
+    document.querySelectorAll("[data-colour]").forEach(el => {
+        el.classList.toggle("active", el.dataset.colour === cake.fondantColour);
+    });
+
+    topperInput.value = cake.topperText;
+    topperPresets.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.topperPreset === cake.topperText);
+    });
+
+    const sliceBtn = document.getElementById("sliceToggleBtn");
+    sliceBtn.classList.toggle("active", cake.sliceView);
+    sliceBtn.setAttribute("aria-pressed", String(cake.sliceView));
+}
+
+let toastTimer = null;
+function showViewportToast(message) {
+    const toast = document.getElementById("viewportToast");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
+}
+
+function applyCakePreset(presetId) {
+    const preset = INSPIRATION_PRESETS[presetId];
+    if (!preset) return;
+
+    cake.flavour = preset.flavour;
+    cake.shape = preset.shape;
+    cake.size = preset.size;
+    cake.layers = preset.layers;
+    cake.creamFlavour = preset.creamFlavour;
+    cake.fillingColour = preset.fillingColour;
+    cake.frostingStyle = preset.frostingStyle;
+    cake.frostingColour = preset.frostingColour;
+    cake.toppings = [...preset.toppings];
+    cake.fondant = preset.fondant;
+    cake.fondantColour = preset.fondantColour;
+    cake.topperText = preset.topperText;
+    cake.sliceView = false;
+
+    syncAllControlsUI();
+    updateCake();
+
+    cameraButtons.forEach(b => b.classList.toggle("active", b.dataset.camera === "iso"));
+    moveCameraTo("iso");
+
+    const customizerSection = document.getElementById("customize");
+    if (customizerSection) {
+        customizerSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    showViewportToast(`Loaded "${preset.label}" on the plate — customize away!`);
+}
+
+document.querySelectorAll(".gallery-card[data-preset]").forEach(card => {
+    card.addEventListener("click", event => {
+        event.preventDefault();
+        applyCakePreset(card.dataset.preset);
+    });
+});
+
+// Camera & viewport buttons
+const cameraButtons = document.querySelectorAll("[data-camera]");
+cameraButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        cameraButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        moveCameraTo(btn.dataset.camera);
+    });
+});
+
+document.getElementById("zoomInBtn").addEventListener("click", () => zoomCamera(0.84));
+document.getElementById("zoomOutBtn").addEventListener("click", () => zoomCamera(1.18));
+
+const autoRotateBtn = document.getElementById("autoRotateBtn");
+autoRotateBtn.addEventListener("click", () => {
+    autoRotate = !autoRotate;
+    autoRotateBtn.classList.toggle("active", autoRotate);
+    autoRotateBtn.setAttribute("aria-pressed", String(autoRotate));
+});
+
+const sliceToggleBtn = document.getElementById("sliceToggleBtn");
+sliceToggleBtn.addEventListener("click", () => {
+    cake.sliceView = !cake.sliceView;
+    sliceToggleBtn.classList.toggle("active", cake.sliceView);
+    sliceToggleBtn.setAttribute("aria-pressed", String(cake.sliceView));
+    rebuildCake3D();
+});
+
+document.getElementById("resetCameraBtn").addEventListener("click", () => {
+    autoRotate = false;
+    autoRotateBtn.classList.remove("active");
+    autoRotateBtn.setAttribute("aria-pressed", "false");
+    cameraButtons.forEach(b => b.classList.toggle("active", b.dataset.camera === "iso"));
+    moveCameraTo("iso");
+});
+
+updateSummaryUI();
+init3DScene();
 </script>
 
 </body>
