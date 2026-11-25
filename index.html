@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="WHISKORA lets you create a cake as personal as the celebration itself.">
 <title>WHISKORA | Whisk Your Imagination to Life.</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23000'/><text x='50' y='68' font-size='55' text-anchor='middle' fill='%23fff' font-family='Arial'>W</text></svg>">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -566,6 +567,145 @@ h2 {
     margin: 6px 0 0;
 }
 
+.summary-actions {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: 18px;
+}
+
+.summary-actions .button-full {
+    grid-column: span 3;
+}
+
+.summary-btn {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    color: var(--espresso);
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: .75rem;
+    font-weight: 600;
+    min-height: 40px;
+    padding: 0 10px;
+    transition: .18s;
+}
+
+.summary-btn:hover {
+    background: var(--sand);
+    border-color: var(--espresso);
+}
+
+/* ORDER MODAL */
+
+.order-modal {
+    align-items: center;
+    background: rgba(34,21,17,.62);
+    backdrop-filter: blur(4px);
+    display: none;
+    inset: 0;
+    justify-content: center;
+    padding: 20px;
+    position: fixed;
+    z-index: 50;
+}
+
+.order-modal.open { display: flex; }
+
+.modal-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow: 0 24px 60px rgba(34,21,17,.26);
+    max-height: 90vh;
+    max-width: 560px;
+    overflow-y: auto;
+    padding: 30px;
+    position: relative;
+    width: 100%;
+}
+
+.modal-close {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    color: var(--espresso);
+    cursor: pointer;
+    font-size: 1.1rem;
+    height: 36px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 36px;
+}
+
+.modal-close:hover {
+    background: var(--espresso);
+    color: var(--paper);
+}
+
+.modal-preview {
+    align-items: center;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    display: flex;
+    gap: 16px;
+    margin: 16px 0 20px;
+    padding: 12px;
+}
+
+.modal-preview img {
+    background: #f5eee5;
+    border: 1px solid var(--line);
+    height: 84px;
+    object-fit: cover;
+    width: 96px;
+}
+
+.modal-preview p {
+    color: var(--cocoa);
+    font-size: .8rem;
+    margin: 4px 0 0;
+}
+
+.modal-form {
+    display: grid;
+    gap: 12px;
+}
+
+.modal-form label {
+    display: grid;
+    font-size: .75rem;
+    font-weight: 700;
+    gap: 5px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.modal-form input,
+.modal-form textarea {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    color: var(--espresso);
+    font-family: var(--sans);
+    font-size: .86rem;
+    font-weight: 400;
+    padding: 10px 12px;
+}
+
+.modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.modal-status {
+    color: var(--rose-dark);
+    font-size: .82rem;
+    font-weight: 600;
+    margin: 8px 0 0;
+    min-height: 20px;
+}
+
 /* TOPPINGS, SWATCHES & TOPPER INPUT */
 
 .decoration-grid {
@@ -913,8 +1053,12 @@ footer h3 {
 @media (max-width:800px) {
     .container { width: min(100% - 32px,620px); }
     .nav { min-height: 68px; }
-    .nav-links,
-    .nav-cta { display: none; }
+    .nav-links { display: none; }
+    .nav-cta {
+        font-size: .72rem;
+        min-height: 36px;
+        padding: 0 12px;
+    }
     .hero { padding: 58px 0 70px; }
 
     .hero-grid,
@@ -1328,6 +1472,12 @@ footer h3 {
             <button type="button" class="option-card" data-topper-preset="With Love">With Love</button>
             <button type="button" class="option-card" data-topper-preset="Celebrate">Celebrate</button>
         </div>
+
+        <div class="sub-label">Celebration candles</div>
+        <div class="option-grid">
+            <button type="button" class="option-card active" data-group="candles" data-value="false">No candles</button>
+            <button type="button" class="option-card" data-group="candles" data-value="true">3 Gold taper candles (+₹60)</button>
+        </div>
     </div>
 
 </div>
@@ -1408,6 +1558,15 @@ footer h3 {
     </div>
 
     <p class="price-note">Final pricing may vary depending on additional customization.</p>
+
+    <div class="summary-actions">
+        <button type="button" class="summary-btn" id="saveSnapshotBtn">Save PNG</button>
+        <button type="button" class="summary-btn" id="shareDesignBtn">Share link</button>
+        <button type="button" class="summary-btn" id="resetDesignBtn">Reset cake</button>
+        <button type="button" class="button button-dark button-full" id="openOrderModalBtn">
+            Request this cake <span aria-hidden="true">↗</span>
+        </button>
+    </div>
 
 </aside>
 
@@ -1590,6 +1749,49 @@ footer h3 {
 
 </main>
 
+<!-- ORDER INQUIRY MODAL -->
+
+<div class="order-modal" id="orderModal" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
+    <div class="modal-card">
+        <button type="button" class="modal-close" id="closeOrderModalBtn" aria-label="Close order request">×</button>
+        <span class="eyebrow">Bengaluru kitchen inquiry</span>
+        <h3 id="orderModalTitle" style="font-size:2.1rem; margin:6px 0 8px;">Send your cake design</h3>
+        <p style="color:var(--cocoa); font-size:.86rem; margin-bottom:0;">Review your 3D creation and share your celebration details. We confirm delivery slots within 24 hours.</p>
+
+        <div class="modal-preview">
+            <img id="modalSnapshotImg" alt="Your custom 3D cake preview">
+            <div>
+                <strong id="modalPriceText" style="color:var(--rose-dark); font-size:1.15rem;">₹350</strong>
+                <p id="modalSpecSummary"></p>
+            </div>
+        </div>
+
+        <form class="modal-form" id="orderInquiryForm">
+            <label>
+                Your name
+                <input type="text" id="orderNameInput" required placeholder="e.g. Ananya Rao">
+            </label>
+            <label>
+                Phone or email
+                <input type="text" id="orderContactInput" required placeholder="e.g. +91 98xxx xxxxx">
+            </label>
+            <label>
+                Celebration date
+                <input type="date" id="orderDateInput" required>
+            </label>
+            <label>
+                Delivery notes (optional)
+                <textarea id="orderNotesInput" rows="2" placeholder="Area in Bengaluru, dietary notes, or ribbon preference"></textarea>
+            </label>
+            <div class="modal-actions">
+                <button type="submit" class="button button-dark">Email order summary ↗</button>
+                <button type="button" class="button button-light" id="copyOrderSummaryBtn">Copy summary</button>
+            </div>
+            <p class="modal-status" id="modalStatusMsg" role="status" aria-live="polite"></p>
+        </form>
+    </div>
+</div>
+
 <!-- FOOTER -->
 
 <footer id="contact">
@@ -1639,7 +1841,7 @@ footer h3 {
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-const cake = {
+const DEFAULT_CAKE = {
     flavour: "Vanilla",
     shape: "Round",
     size: "500g",
@@ -1652,15 +1854,19 @@ const cake = {
     fondant: "None",
     fondantColour: "Blush pink",
     topperText: "",
+    candles: false,
     sliceView: false
 };
+
+const cake = { ...DEFAULT_CAKE, toppings: [] };
 
 const PRICES = {
     size: { "500g": 350, "1kg": 650, "2kg": 1200 },
     layers: { Single: 0, Double: 200, Triple: 400 },
     topping: 50,
     fondant: 100,
-    topperText: 50
+    topperText: 50,
+    candles: 60
 };
 
 const SPONGE_COLOURS = {
@@ -1719,6 +1925,17 @@ const CUT_END = -0.14;
 
 /* ---------------- SUMMARY & PRICING ---------------- */
 
+function getCakeTotalPrice() {
+    return (
+        PRICES.size[cake.size] +
+        PRICES.layers[cake.layers] +
+        cake.toppings.length * PRICES.topping +
+        (cake.fondant !== "None" ? PRICES.fondant : 0) +
+        (cake.topperText.trim() ? PRICES.topperText : 0) +
+        (cake.candles ? PRICES.candles : 0)
+    );
+}
+
 function updateSummaryUI() {
     document.getElementById("selectedFlavour").textContent = cake.flavour;
     document.getElementById("selectedShape").textContent = cake.shape;
@@ -1733,17 +1950,14 @@ function updateSummaryUI() {
         cake.toppings.length ? cake.toppings.join(", ") : "None";
     document.getElementById("selectedFondant").textContent =
         cake.fondant === "None" ? "None" : cake.fondant + " (" + cake.fondantColour + ")";
+
+    const topDesignParts = [];
+    if (cake.topperText.trim()) topDesignParts.push(`"${cake.topperText.trim()}"`);
+    if (cake.candles) topDesignParts.push("3 Gold candles");
     document.getElementById("selectedTopperText").textContent =
-        cake.topperText.trim() ? `"${cake.topperText.trim()}"` : "None";
+        topDesignParts.length ? topDesignParts.join(" · ") : "None";
 
-    const totalPrice =
-        PRICES.size[cake.size] +
-        PRICES.layers[cake.layers] +
-        cake.toppings.length * PRICES.topping +
-        (cake.fondant !== "None" ? PRICES.fondant : 0) +
-        (cake.topperText.trim() ? PRICES.topperText : 0);
-
-    document.getElementById("cakePrice").textContent = "₹" + totalPrice;
+    document.getElementById("cakePrice").textContent = "₹" + getCakeTotalPrice();
 }
 
 /* ---------------- PROCEDURAL TEXTURES ---------------- */
@@ -1817,6 +2031,32 @@ function getFrostingBumpTexture() {
     tex.wrapS = THREE.RepeatWrapping;
     tex.wrapT = THREE.RepeatWrapping;
     tex.repeat.set(3, 2);
+    textureCache.set(key, tex);
+    return tex;
+}
+
+function getTopSwirlBumpTexture() {
+    const key = "top-swirl-bump";
+    if (textureCache.has(key)) return textureCache.get(key);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = "#808080";
+    ctx.fillRect(0, 0, 256, 256);
+
+    for (let r = 118; r > 6; r -= 7) {
+        const shade = 115 + Math.round(Math.sin(r * 0.45) * 42);
+        ctx.strokeStyle = `rgb(${shade},${shade},${shade})`;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(128, 128, r, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+
+    const tex = new THREE.CanvasTexture(canvas);
     textureCache.set(key, tex);
     return tex;
 }
@@ -2397,6 +2637,56 @@ function createEdibleFlower(petalHex) {
     return group;
 }
 
+const candleFlames = [];
+
+function createCandleCluster() {
+    const group = new THREE.Group();
+    const waxMat = new THREE.MeshStandardMaterial({ color: "#faf1dc", roughness: 0.42 });
+    const goldMat = new THREE.MeshStandardMaterial({ color: "#dcb863", roughness: 0.25, metalness: 0.72 });
+    const flameMat = new THREE.MeshBasicMaterial({ color: "#ffb84d" });
+    const coreMat = new THREE.MeshBasicMaterial({ color: "#fff6cc" });
+
+    const offsets = [
+        { x: -0.14, z: -0.05, h: 0.34 },
+        { x: 0.0, z: -0.14, h: 0.41 },
+        { x: 0.14, z: -0.04, h: 0.32 }
+    ];
+
+    offsets.forEach((cfg, idx) => {
+        const holder = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.032, 0.024, 14), goldMat);
+        holder.position.set(cfg.x, 0.012, cfg.z);
+        holder.castShadow = true;
+        group.add(holder);
+
+        const body = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.022, cfg.h, 14), waxMat);
+        body.position.set(cfg.x, 0.024 + cfg.h * 0.5, cfg.z);
+        body.castShadow = true;
+        group.add(body);
+
+        const stripe = new THREE.Mesh(new THREE.TorusGeometry(0.0215, 0.004, 8, 16), goldMat);
+        stripe.rotation.x = Math.PI / 2;
+        stripe.position.set(cfg.x, 0.024 + cfg.h * 0.7, cfg.z);
+        group.add(stripe);
+
+        const flamePivot = new THREE.Group();
+        flamePivot.position.set(cfg.x, 0.024 + cfg.h + 0.035, cfg.z);
+        flamePivot.userData.phase = idx * 1.9;
+
+        const outerFlame = new THREE.Mesh(new THREE.ConeGeometry(0.022, 0.075, 10), flameMat);
+        const innerFlame = new THREE.Mesh(new THREE.ConeGeometry(0.011, 0.042, 8), coreMat);
+        innerFlame.position.y = -0.008;
+        flamePivot.add(outerFlame, innerFlame);
+        group.add(flamePivot);
+        candleFlames.push(flamePivot);
+    });
+
+    const glow = new THREE.PointLight("#ffcf87", 0.45, 2.2);
+    glow.position.set(0, 0.52, -0.08);
+    group.add(glow);
+
+    return group;
+}
+
 function createFondantTopper(type, colorHex) {
     const group = new THREE.Group();
     const mat = new THREE.MeshStandardMaterial({
@@ -2571,6 +2861,7 @@ function buildPedestalStand() {
 
 function rebuildCake3D() {
     if (!cakeRoot) return;
+    candleFlames.length = 0;
     disposeGroup(cakeRoot);
 
     const dims = SIZE_DIMENSIONS[cake.size];
@@ -2624,6 +2915,16 @@ function rebuildCake3D() {
         bumpMap: isTextured ? getFrostingBumpTexture() : null,
         bumpScale: isTextured ? 0.032 : 0
     });
+
+    const topFrostingMat = isTextured
+        ? new THREE.MeshStandardMaterial({
+              color: frostingColor,
+              roughness: 0.52,
+              metalness: 0.02,
+              bumpMap: getTopSwirlBumpTexture(),
+              bumpScale: 0.028
+          })
+        : frostingMat;
 
     // Build internal sponge + visible cream layers
     let currentY = 0;
@@ -2681,7 +2982,7 @@ function rebuildCake3D() {
 
         // Thick top frosting crown
         const topShape = buildSolidShape(cake.shape, radius + 0.048, cake.sliceView);
-        const topCap = createExtrudedMesh(topShape, topCapThickness + 0.025, frostingMat, 0.022);
+        const topCap = createExtrudedMesh(topShape, topCapThickness + 0.025, topFrostingMat, 0.022);
         topCap.position.y = totalStackHeight - 0.01;
         cakeRoot.add(topCap);
     } else {
@@ -2692,7 +2993,7 @@ function rebuildCake3D() {
         cakeRoot.add(wallMesh);
 
         const topShape = buildSolidShape(cake.shape, radius + 0.052, cake.sliceView);
-        const topCap = createExtrudedMesh(topShape, topCapThickness, frostingMat, 0.022);
+        const topCap = createExtrudedMesh(topShape, topCapThickness, topFrostingMat, 0.022);
         topCap.position.y = totalStackHeight - 0.005;
         cakeRoot.add(topCap);
 
@@ -2846,6 +3147,17 @@ function rebuildCake3D() {
         cakeRoot.add(fondantMesh);
     }
 
+    // Celebration candles
+    if (cake.candles) {
+        const candles = createCandleCluster();
+        candles.position.set(
+            cake.sliceView ? -0.18 : 0,
+            topY,
+            cake.fondant !== "None" ? -0.22 : (trimmedText ? -0.26 : -0.05)
+        );
+        cakeRoot.add(candles);
+    }
+
     // Center vertical focus nicely around half cake height
     if (controls && !cameraTransition) {
         controls.target.set(0, THREE.MathUtils.clamp(totalStackHeight * 0.48, 0.38, 0.72), 0);
@@ -2954,6 +3266,16 @@ function init3DScene() {
         const animate = () => {
             requestAnimationFrame(animate);
 
+            if (candleFlames.length) {
+                const now = performance.now() * 0.006;
+                candleFlames.forEach(flame => {
+                    const p = flame.userData.phase || 0;
+                    const s = 0.92 + Math.sin(now + p) * 0.1 + Math.cos(now * 1.7 + p) * 0.05;
+                    flame.scale.set(0.95 + Math.cos(now + p) * 0.05, s, 0.95);
+                    flame.rotation.z = Math.sin(now * 1.3 + p) * 0.08;
+                });
+            }
+
             if (cameraTransition) {
                 camera.position.lerp(cameraTransition.pos, 0.12);
                 controls.target.lerp(cameraTransition.target, 0.12);
@@ -2979,10 +3301,76 @@ function init3DScene() {
     }
 }
 
-/* ---------------- UI BINDINGS ---------------- */
+function captureCakeSnapshotDataUrl() {
+    if (!renderer || !scene || !camera) return null;
+    renderer.render(scene, camera);
+    return canvas.toDataURL("image/png");
+}
+
+/* ---------------- PERSISTENCE & UI BINDINGS ---------------- */
+
+const STORAGE_KEY = "whiskora_cake_v1";
+
+function saveCakeToStorage() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(cake));
+    } catch {
+        // Ignore storage quota / privacy mode errors
+    }
+}
+
+function encodeCakeToHash() {
+    const json = JSON.stringify(cake);
+    const bytes = new TextEncoder().encode(json);
+    let bin = "";
+    bytes.forEach(b => { bin += String.fromCharCode(b); });
+    return "#design=" + btoa(bin);
+}
+
+function tryRestoreCake() {
+    const candidates = [];
+    if (window.location.hash.startsWith("#design=")) {
+        try {
+            const b64 = window.location.hash.slice("#design=".length);
+            const bin = atob(b64);
+            const bytes = Uint8Array.from(bin, ch => ch.charCodeAt(0));
+            candidates.push({ data: JSON.parse(new TextDecoder().decode(bytes)), source: "shared" });
+        } catch {
+            // Ignore malformed shared hash
+        }
+    }
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) candidates.push({ data: JSON.parse(saved), source: "saved" });
+    } catch {
+        // Ignore storage errors
+    }
+
+    for (const item of candidates) {
+        const d = item.data;
+        if (!d || typeof d !== "object") continue;
+        if (SPONGE_COLOURS[d.flavour]) cake.flavour = d.flavour;
+        if (["Round", "Heart", "Square"].includes(d.shape)) cake.shape = d.shape;
+        if (SIZE_DIMENSIONS[d.size]) cake.size = d.size;
+        if (["Single", "Double", "Triple"].includes(d.layers)) cake.layers = d.layers;
+        if (CREAM_DEFAULT_COLOURS[d.creamFlavour]) cake.creamFlavour = d.creamFlavour;
+        if (FILLING_HEX[d.fillingColour]) cake.fillingColour = d.fillingColour;
+        if (["Smooth", "Textured", "Layered"].includes(d.frostingStyle)) cake.frostingStyle = d.frostingStyle;
+        if (FROSTING_HEX[d.frostingColour]) cake.frostingColour = d.frostingColour;
+        if (Array.isArray(d.toppings)) cake.toppings = d.toppings.filter(t => typeof t === "string");
+        if (["None", "Flower", "Bow", "Heart", "Star"].includes(d.fondant)) cake.fondant = d.fondant;
+        if (FONDANT_HEX[d.fondantColour]) cake.fondantColour = d.fondantColour;
+        if (typeof d.topperText === "string") cake.topperText = d.topperText.slice(0, 24);
+        cake.candles = Boolean(d.candles);
+        cake.sliceView = Boolean(d.sliceView);
+        return item.source;
+    }
+    return null;
+}
 
 function updateCake() {
     updateSummaryUI();
+    saveCakeToStorage();
     rebuildCake3D();
 }
 
@@ -3101,6 +3489,10 @@ topperPresets.forEach(btn => {
     });
 });
 
+setupSingleChoice('[data-group="candles"]', el => {
+    cake.candles = el.dataset.value === "true";
+});
+
 /* ---------------- INSPIRATION PRESETS ---------------- */
 
 const INSPIRATION_PRESETS = {
@@ -3117,7 +3509,8 @@ const INSPIRATION_PRESETS = {
         toppings: ["Pink drip", "Rainbow sprinkles", "Cream swirls", "Cherries", "Strawberries"],
         fondant: "None",
         fondantColour: "Blush pink",
-        topperText: ""
+        topperText: "",
+        candles: false
     },
     "midnight": {
         label: "Midnight",
@@ -3132,7 +3525,8 @@ const INSPIRATION_PRESETS = {
         toppings: ["Chocolate drip", "Chocolate curls", "Gold pearls", "Cherries"],
         fondant: "None",
         fondantColour: "Ivory",
-        topperText: ""
+        topperText: "",
+        candles: false
     },
     "petal-pink": {
         label: "Petal pink",
@@ -3147,7 +3541,8 @@ const INSPIRATION_PRESETS = {
         toppings: ["Cream swirls", "Edible flowers", "Macarons"],
         fondant: "Flower",
         fondantColour: "Blush pink",
-        topperText: "With Love"
+        topperText: "With Love",
+        candles: false
     }
 };
 
@@ -3194,6 +3589,10 @@ function syncAllControlsUI() {
         btn.classList.toggle("active", btn.dataset.topperPreset === cake.topperText);
     });
 
+    document.querySelectorAll('[data-group="candles"]').forEach(el => {
+        el.classList.toggle("active", (el.dataset.value === "true") === cake.candles);
+    });
+
     const sliceBtn = document.getElementById("sliceToggleBtn");
     sliceBtn.classList.toggle("active", cake.sliceView);
     sliceBtn.setAttribute("aria-pressed", String(cake.sliceView));
@@ -3208,6 +3607,8 @@ function showViewportToast(message) {
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
 }
+
+const cameraButtons = document.querySelectorAll("[data-camera]");
 
 function applyCakePreset(presetId) {
     const preset = INSPIRATION_PRESETS[presetId];
@@ -3225,6 +3626,7 @@ function applyCakePreset(presetId) {
     cake.fondant = preset.fondant;
     cake.fondantColour = preset.fondantColour;
     cake.topperText = preset.topperText;
+    cake.candles = Boolean(preset.candles);
     cake.sliceView = false;
 
     syncAllControlsUI();
@@ -3248,7 +3650,6 @@ document.querySelectorAll(".gallery-card[data-preset]").forEach(card => {
 });
 
 // Camera & viewport buttons
-const cameraButtons = document.querySelectorAll("[data-camera]");
 cameraButtons.forEach(btn => {
     btn.addEventListener("click", () => {
         cameraButtons.forEach(b => b.classList.remove("active"));
@@ -3272,6 +3673,7 @@ sliceToggleBtn.addEventListener("click", () => {
     cake.sliceView = !cake.sliceView;
     sliceToggleBtn.classList.toggle("active", cake.sliceView);
     sliceToggleBtn.setAttribute("aria-pressed", String(cake.sliceView));
+    saveCakeToStorage();
     rebuildCake3D();
 });
 
@@ -3283,8 +3685,137 @@ document.getElementById("resetCameraBtn").addEventListener("click", () => {
     moveCameraTo("iso");
 });
 
+/* ---------------- EXPORT, SHARE, RESET & ORDER MODAL ---------------- */
+
+function buildOrderSummaryText(extra = {}) {
+    const lines = [
+        "WHISKORA — Custom 3D Cake Request",
+        `• Sponge: ${cake.flavour}`,
+        `• Shape & Size: ${cake.shape}, ${cake.size} (${cake.layers} layer)`,
+        `• Cream & Filling: ${cake.creamFlavour} (${cake.fillingColour})`,
+        `• Frosting: ${cake.frostingStyle} · ${cake.frostingColour}`,
+        `• Decorations: ${cake.toppings.length ? cake.toppings.join(", ") : "None"}`,
+        `• Fondant: ${cake.fondant === "None" ? "None" : `${cake.fondant} (${cake.fondantColour})`}`,
+        `• Cake-top message: ${cake.topperText.trim() || "None"}`,
+        `• Candles: ${cake.candles ? "3 Gold taper candles" : "None"}`,
+        `• Estimated Price: ₹${getCakeTotalPrice()}`
+    ];
+    if (extra.name) lines.push(`• Name: ${extra.name}`);
+    if (extra.contact) lines.push(`• Contact: ${extra.contact}`);
+    if (extra.date) lines.push(`• Celebration Date: ${extra.date}`);
+    if (extra.notes) lines.push(`• Notes: ${extra.notes}`);
+    return lines.join("\n");
+}
+
+document.getElementById("saveSnapshotBtn").addEventListener("click", () => {
+    const dataUrl = captureCakeSnapshotDataUrl();
+    if (!dataUrl) {
+        showViewportToast("3D snapshot unavailable in this browser.");
+        return;
+    }
+    const link = document.createElement("a");
+    link.download = `whiskora-${cake.shape.toLowerCase()}-${cake.size}-cake.png`;
+    link.href = dataUrl;
+    link.click();
+    showViewportToast("Saved 3D cake PNG snapshot!");
+});
+
+document.getElementById("shareDesignBtn").addEventListener("click", async () => {
+    const hash = encodeCakeToHash();
+    history.replaceState(null, "", hash);
+    const shareUrl = window.location.href;
+    try {
+        await navigator.clipboard.writeText(shareUrl);
+        showViewportToast("Shareable design link copied!");
+    } catch {
+        showViewportToast("Design saved to URL — copy from address bar.");
+    }
+});
+
+document.getElementById("resetDesignBtn").addEventListener("click", () => {
+    Object.assign(cake, DEFAULT_CAKE, { toppings: [] });
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+    syncAllControlsUI();
+    updateCake();
+    cameraButtons.forEach(b => b.classList.toggle("active", b.dataset.camera === "iso"));
+    moveCameraTo("iso");
+    showViewportToast("Reset cake to classic Vanilla Round.");
+});
+
+const orderModal = document.getElementById("orderModal");
+const modalSnapshotImg = document.getElementById("modalSnapshotImg");
+const modalPriceText = document.getElementById("modalPriceText");
+const modalSpecSummary = document.getElementById("modalSpecSummary");
+const modalStatusMsg = document.getElementById("modalStatusMsg");
+const orderDateInput = document.getElementById("orderDateInput");
+
+const minOrderDate = new Date(Date.now() + 3 * 86400000).toISOString().split("T")[0];
+orderDateInput.min = minOrderDate;
+
+function closeOrderModal() {
+    orderModal.classList.remove("open");
+}
+
+document.getElementById("openOrderModalBtn").addEventListener("click", () => {
+    const snap = captureCakeSnapshotDataUrl();
+    if (snap) {
+        modalSnapshotImg.src = snap;
+        modalSnapshotImg.style.display = "block";
+    } else {
+        modalSnapshotImg.style.display = "none";
+    }
+    modalPriceText.textContent = "₹" + getCakeTotalPrice();
+    modalSpecSummary.textContent = `${cake.flavour} · ${cake.shape} · ${cake.size} · ${cake.layers} · ${cake.frostingStyle} ${cake.frostingColour}`;
+    modalStatusMsg.textContent = "";
+    orderModal.classList.add("open");
+});
+
+document.getElementById("closeOrderModalBtn").addEventListener("click", closeOrderModal);
+orderModal.addEventListener("click", event => {
+    if (event.target === orderModal) closeOrderModal();
+});
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && orderModal.classList.contains("open")) {
+        closeOrderModal();
+    }
+});
+
+document.getElementById("copyOrderSummaryBtn").addEventListener("click", async () => {
+    const summary = buildOrderSummaryText({
+        name: document.getElementById("orderNameInput").value.trim(),
+        contact: document.getElementById("orderContactInput").value.trim(),
+        date: orderDateInput.value,
+        notes: document.getElementById("orderNotesInput").value.trim()
+    });
+    try {
+        await navigator.clipboard.writeText(summary);
+        modalStatusMsg.textContent = "Order summary copied to clipboard!";
+    } catch {
+        modalStatusMsg.textContent = "Clipboard blocked — please use Email order summary.";
+    }
+});
+
+document.getElementById("orderInquiryForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const summary = buildOrderSummaryText({
+        name: document.getElementById("orderNameInput").value.trim(),
+        contact: document.getElementById("orderContactInput").value.trim(),
+        date: orderDateInput.value,
+        notes: document.getElementById("orderNotesInput").value.trim()
+    });
+    const subject = encodeURIComponent(`WHISKORA 3D Cake Order Inquiry (${cake.shape}, ${cake.size})`);
+    const body = encodeURIComponent(summary);
+    modalStatusMsg.textContent = "Opening your email app with the full cake specification...";
+    window.location.href = `mailto:hello@whiskora.in?subject=${subject}&body=${body}`;
+});
+
+const restoredSource = tryRestoreCake();
+syncAllControlsUI();
 updateSummaryUI();
 init3DScene();
+if (restoredSource === "shared") {
+    showViewportToast("Loaded shared cake design!");
+}
 </script>
 
 </body>
